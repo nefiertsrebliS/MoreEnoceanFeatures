@@ -1,0 +1,26 @@
+{
+	"elements":
+	[
+		{ "name": "DeviceID", "type": "NumberSpinner", "caption": "DeviceID:" },
+		{ "name": "ReturnID", "type": "ValidationTextBox", "caption": "ReturnID:" },
+		{ "name": "DownTime", "type": "NumberSpinner", "caption": "Fahrzeit Schließen (0-100%) in sec:", "digits": 1 },
+		{ "name": "UpTime", "type": "NumberSpinner", "caption": "Fahrzeit Öffnen (100-0%) in sec:", "digits": 1 },
+		{ "name": "RollFactor", "type": "NumberSpinner", "caption": "Wickelfaktor:", "digits": 2 },
+		{ "name": "StepTime", "type": "NumberSpinner", "caption": "Schrittdauer in sec:", "digits": 1 }
+	],
+    "actions":
+    [
+		{ "type": "Label", "caption": "Drücken Sie EINLERNEN, nachdem Sie das Gerät in den Lernmodus versetzt haben" },
+        { "type": "Button", "label": "einlernen", "onClick": "MEF_Learn($id);" },
+        { "type": "Button", "label": "öffnen", "onClick": "MEF_ShutterMoveUp($id);" },
+        { "type": "Button", "label": "Schritt öffnen", "onClick": "MEF_ShutterStepUp($id);" },
+        { "type": "Button", "label": "stop", "onClick": "MEF_ShutterStop($id);" },
+        { "type": "Button", "label": "Schritt schließen", "onClick": "MEF_ShutterStepDown($id);" },
+        { "type": "Button", "label": "schließen", "onClick": "MEF_ShutterMoveDown($id);" },
+		{ "type": "Label", "caption": "" },
+		{ "type": "Label", "caption": "Die folgenden Funktionen können zur Kalibrierung des Moduls genutzt werden (siehe README.html im Modulordner)" },
+        { "type": "Button", "label": "98% schließen", "onClick": "MEF_ShutterMoveTo($id, 98);" },
+        { "type": "Button", "label": "50% schließen", "onClick": "MEF_ShutterMoveTo($id, 50);" },
+        { "type": "Button", "label": "2% schließen", "onClick": "MEF_ShutterMoveTo($id, 2);" }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+	"id": "{AEDED946-18A0-453D-9470-555E2D23736D}",
+	"name": "EltakoShutter",
+	"type": 3,
+	"vendor": "Enocean",
+	"aliases": 
+	[
+		"Eltako FSB14",
+		"Eltako FSB61",
+		"Eltako FSB71"
+	],
+	"parentRequirements": ["{70E3075F-A35D-4DEB-AC20-C929A156FE48}"],
+	"childRequirements": [],
+	"implemented": ["{DE2DA2C0-7A28-4D23-A9AA-6D1C7609C7EC}"],
+	"prefix": "MEF"
+}
