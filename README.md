@@ -3,10 +3,6 @@
   <head>
     <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-  
-	<title>MoreEnoceanFeatures/README.md at master · silberstreifen/MoreEnoceanFeatures</title>
-    <meta name="description" content="Symcon MoreEnoceanFeatures Modules.">
-
   </head>
 
   <body>
