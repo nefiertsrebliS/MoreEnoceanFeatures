@@ -11,6 +11,7 @@
 			$this->RegisterPropertyFloat("UpTime", 1.0);
 			$this->RegisterPropertyFloat("RollFactor", 1.0);
 			$this->RegisterPropertyFloat("StepTime", 0.1);
+			$this->SetBuffer("Calibrate", "false");
 
 			$this->RegisterPropertyString("BaseData", '{
 				"DataID":"{70E3075F-A35D-4DEB-AC20-C929A156FE48}",
@@ -106,44 +107,75 @@
 		{
 			$this->SendDebug("Receive", $JSONString, 0);
 			$data = json_decode($JSONString);
+#			$this->SendDebug("Kalibrierung", $JSONString, 0);
+
+#			Kalibrieren, wenn eingeleitet
+			if($this->GetBuffer("Calibrate")=="true"){
+				$this->SetBuffer("Calibrate", "false");
+
+		        switch($data->Device) {
+		            case "165":
+						$dt = ((int)$data->DataByte2 + (int)$data->DataByte3 * 255)/10;
+						switch($data->DataByte1) {
+							case 1:
+								IPS_SetProperty ($this->InstanceID, "UpTime", $dt);
+								IPS_ApplyChanges ($this->InstanceID);
+								break;
+							case 2:
+								IPS_SetProperty ($this->InstanceID, "DownTime", $dt);
+								IPS_ApplyChanges ($this->InstanceID);
+								break;
+							default:
+						}
+						$this->SetValue("action", 0);
+		                break;
+		            default:
+						$this->LogMessage("Kalibrierung fehlgeschlagen", KL_ERROR);
+		        }
+
+			}
 
             switch($data->Device) {
 
 #				ShutterDevice liefert Richtung und Fahrzeit
                 case "165":
-					$this->SetValue("action", 0);
 					$dt = (int)$data->DataByte2 + (int)$data->DataByte3 * 255;
+					$DownTime = $this->ReadPropertyFloat("DownTime");
+					$UpTime = $this->ReadPropertyFloat("UpTime");
+					$RollFactor = $this->ReadPropertyFloat("RollFactor");
+
 					switch($data->DataByte1) {
 						case 1:
 #							neue Fahrzeit für 0 bis aktuelle Position ermitteln
-							$dt = $dt / 10 / $this->ReadPropertyFloat("UpTime") * $this->ReadPropertyFloat("DownTime");
+							$dt = $dt / 10 / $UpTime * $DownTime;
 							$newValue = $this->GetValue("movetime") - $dt;
 							if($newValue < 0)$newValue = 0;
 							$this->SetValue("movetime", $newValue);
 
 #							Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
-							$Factor = $this->ReadPropertyFloat("RollFactor") - ($this->ReadPropertyFloat("RollFactor") - 1) / $this->ReadPropertyFloat("DownTime") * $newValue;
+							$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
 
 #							neue Position ermitteln
-							$newPosition = round($newValue / $this->ReadPropertyFloat("DownTime") * 100 * $Factor);
+							$newPosition = round($newValue / $DownTime * 100 * $Factor);
 							$this->SetValue("position", $newPosition);
 						    break;
 						case 2:
 #							neue Fahrzeit für 0 bis aktuelle Position ermitteln
 							$dt = $dt / 10;
 							$newValue = $this->GetValue("movetime") + $dt;
-							if($newValue > $this->ReadPropertyFloat("DownTime"))$newValue = $this->ReadPropertyFloat("DownTime");
+							if($newValue > $DownTime)$newValue = $DownTime;
 							$this->SetValue("movetime", $newValue);
 
 #							Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
-							$Factor = $this->ReadPropertyFloat("RollFactor") - ($this->ReadPropertyFloat("RollFactor") - 1) / $this->ReadPropertyFloat("DownTime") * $newValue;
+							$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
 
 #							neue Position ermitteln
-							$newPosition = round($newValue / $this->ReadPropertyFloat("DownTime") * 100 * $Factor);
+							$newPosition = round($newValue / $DownTime * 100 * $Factor);
 							$this->SetValue("position", $newPosition);
 						    break;
 						default:
 					}
+					$this->SetValue("action", 0);
                     break;
 
 #				SwitchDevice liefert Richtung und Endposition
@@ -158,7 +190,7 @@
 						case 80:
 							$this->SetValue("action", 0);
 							$this->SetValue("position", 100);
-							$this->SetValue("movetime", $this->ReadPropertyFloat("DownTime"));
+							$this->SetValue("movetime", $DownTime);
 						    break;
 						case 112:
 							$this->SetValue("action", 0);
@@ -213,6 +245,14 @@
 			$data->DataByte1 = 13;
 			$data->DataByte0 = 128;
 			$this->SendData(json_encode($data));
+        }
+		
+        public function ShutterCalibrate() 
+		{
+			$this->SetBuffer("Calibrate", "true");
+								IPS_SetProperty ($this->InstanceID, "DownTime", 22.1);
+								IPS_ApplyChanges ($this->InstanceID);
+			$this->ShutterStop();
         }
 		
         public function ShutterStop() 

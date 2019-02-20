@@ -12,15 +12,33 @@
     [
 		{ "type": "Label", "caption": "Drücken Sie EINLERNEN, nachdem Sie das Gerät in den Lernmodus versetzt haben" },
         { "type": "Button", "label": "einlernen", "onClick": "MEF_Learn($id);" },
+		{ "type": "PopupButton", "caption": "Kalibrieren","popup": 
+			{"caption": "Kalibrieren","items": 
+				[
+					{ "type": "Label", "caption": "FAHRZEIT SCHLIESSEN" },
+					{ "type": "Label", "caption": "1. Rollladen VOLLSTÄNDIG öffnen" },
+					{ "type": "Button", "label": "öffnen", "onClick": "MEF_ShutterMoveUp($id);" },
+					{ "type": "Label", "caption": "2. Kalibrierung starten" },
+					{ "type": "Button", "label": "Starten", "onClick": "MEF_ShutterMoveDown($id);" },
+					{ "type": "Label", "caption": "3. Zur exakten Kalibrierung die Kalibriertaste SOFORT drücken, wenn der Rollladen vollständig geschlossen ist" },
+					{ "type": "Button", "label": "Kalibrieren", "onClick": "MEF_ShutterCalibrate($id);" },
+					{ "type": "Label", "caption": "__________________________________________________________________________" },
+					{ "type": "Label", "caption": "" },
+					{ "type": "Label", "caption": "FAHRZEIT ÖFFNEN" },
+					{ "type": "Label", "caption": "1. Rollladen VOLLSTÄNDIG schließen" },
+					{ "type": "Button", "label": "schließen", "onClick": "MEF_ShutterMoveDown($id);" },
+					{ "type": "Label", "caption": "2. Kalibrierung starten" },
+					{ "type": "Button", "label": "Starten", "onClick": "MEF_ShutterMoveUp($id);" },
+					{ "type": "Label", "caption": "3. Zur exakten Kalibrierung die Kalibriertaste SOFORT drücken, wenn der Rollladen vollständig geöffnet ist" },
+					{ "type": "Button", "label": "Kalibrieren", "onClick": "MEF_ShutterCalibrate($id);" }
+				]
+		    }
+		},
+		{ "type": "Label", "caption": "__________________________________________________________________________" },
         { "type": "Button", "label": "öffnen", "onClick": "MEF_ShutterMoveUp($id);" },
         { "type": "Button", "label": "Schritt öffnen", "onClick": "MEF_ShutterStepUp($id);" },
         { "type": "Button", "label": "stop", "onClick": "MEF_ShutterStop($id);" },
         { "type": "Button", "label": "Schritt schließen", "onClick": "MEF_ShutterStepDown($id);" },
-        { "type": "Button", "label": "schließen", "onClick": "MEF_ShutterMoveDown($id);" },
-		{ "type": "Label", "caption": "" },
-		{ "type": "Label", "caption": "Die folgenden Funktionen können zur Kalibrierung des Moduls genutzt werden (siehe README.html im Modulordner)" },
-        { "type": "Button", "label": "98% schließen", "onClick": "MEF_ShutterMoveTo($id, 98);" },
-        { "type": "Button", "label": "50% schließen", "onClick": "MEF_ShutterMoveTo($id, 50);" },
-        { "type": "Button", "label": "2% schließen", "onClick": "MEF_ShutterMoveTo($id, 2);" }
+        { "type": "Button", "label": "schließen", "onClick": "MEF_ShutterMoveDown($id);" }
     ]
 }

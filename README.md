@@ -14,22 +14,21 @@
 	Das Modul wurde für den <b>FSB14</b> entwickelt, sollte aber auch für den <b>FSB61</b> und den <b>FSB71</b> einsetzbar sein.<br>
 	Das Modul kann zum exakten Anfahren einer bestimmten Rollladenposition konfiguriert werden.
 	<h3>Kalibrierung</h3>
+	Das Kalibriermenü wird in der Modulansicht mit <b><i>KALIBRIEREN</i></b> aufgerufen.<br><br>
 	<b><i>Fahrzeit Schließen (0-100%)</i></b>
 	<ol>
-		<li>Rolladen komplett öffnen</li>
-		<li>Bei <b><i>Fahrzeit Schließen (0-100%)</i></b> die ungefähre Schließzeit (Startwert am besten zu klein) eingeben</li>
-		<li><b><i>98% SCHLIESSEN</i></b> drücken. Der Rollladen sollte sich jetzt nahezu vollständig schließen</li>
-		<li>Ist der Rollladen noch zu weit geöffnet, die Schritte 2 und 3 mit einer erhöhten Fahrzeit wiederholen</li>
-		<li>Ist der Rollladen zu weit geschlossen, die Schritte 1 bis 3 mit einer verringerten Fahrzeit wiederholen</li>
-	</ol><br> 	
+		<li>Rolladen <b>vollständig</b> öffnen</li>
+		<li>Kalibrierung starten</li>
+		<li>Sobald der Rollladen vollständig geschlossen ist, <b><i>KALIBRIEREN</i></b> drücken. Je exakter Sie den Zeitpunkt treffen, um so exakter ist die Kalibrierung</li>
+	</ol>
+	Durch den Vorgang wird der Wert von <b><i>Fahrzeit Schließen (0-100%)</i></b> überschrieben. Zu Feinkalibrierung können Sie den Wert in der Modulansicht händisch anpassen.<br><br>	
 	<b><i>Fahrzeit Öffnen (100-0%)</i></b>
 	<ol>
-		<li>Rolladen komplett schließen</li>
-		<li>Bei <b><i>Fahrzeit Öffnen (100-0%)</i></b> die ungefähre Fahrzeit eingeben. Ein guter Startwert ist die <i>Fahrzeit Schließen (0-100%)</i>.</li>
-		<li><b><i>2% SCHLIESSEN</i></b> drücken. Der Rollladen sollte sich jetzt nahezu vollständig öffnen</li>
-		<li>Ist der Rollladen noch zu weit geschlossen, die Schritte 2 und 3 mit einer erhöhten Fahrzeit wiederholen</li>
-		<li>Ist der Rollladen zu weit geöffnet, die Schritte 1 bis 3 mit einer verringerten Fahrzeit wiederholen</li>
-	</ol><br> 	
+		<li>Rolladen <b>vollständig</b> schließen</li>
+		<li>Kalibrierung starten</li>
+		<li>Sobald der Rollladen vollständig geöffnet ist, <b><i>KALIBRIEREN</i></b> drücken. Je exakter Sie den Zeitpunkt treffen, um so exakter ist die Kalibrierung</li>
+	</ol>
+	Durch den Vorgang wird der Wert von <b><i>Fahrzeit Öffnen (100-0%)</i></b> überschrieben. Zu Feinkalibrierung können Sie den Wert in der Modulansicht händisch anpassen.<br><br>	
 	<b><i>Wickelfaktor</i></b><br><br>
 	Der Wickelfaktor berücksichtigt die Tatsache, dass die Rolle des Rollladens beim Aufrollen größer wird. Dadurch steigt die Geschwindigkeit des Öffnungsvorgangs. 
 	Je größer der Wickelfaktor desto größer der Effekt.<br>
@@ -37,8 +36,9 @@
 	<ol>
 		<li>Rolladen komplett öffnen</li>
 		<li><b><i>50% SCHLIESSEN</i></b> drücken. Der Rollladen sollte sich jetzt zu 50% schließen</li>
-		<li>Ist der Rollladen zu weit geschlossen, die Schritte 1 und 2 mit einem größeren Wickelfaktor wiederholen</li>
-		<li>Ist der Rollladen zu weit geöffnet, die Schritte 1 und 2 mit einem kleineren Wickelfaktor wiederholen</li>
+		<li>Ist der Rollladen zu weit geschlossen, den 2.Schritt mit einem größeren Wickelfaktor wiederholen</li>
+		<li>Ist der Rollladen zu weit geöffnet, den 2.Schritt mit einem kleineren Wickelfaktor wiederholen</li>
+		<li>Passt die Position, sollten zur Kontrolle die Schritte 1 und 2 wiederholt werden</li>
 	</ol><br> 	
 	<h3>Zusätzliche PHP-Befehle</h3>
 	<table>
@@ -107,6 +107,14 @@
 	  <tr>
 		<td>V1.07</td>
 		<td>Fix: ShutterMoveTo Berechnungsfehler beim Öffnen</td>
+	  </tr>
+	  <tr>
+		<td>V1.08</td>
+		<td>Neu: Vereinfachte Kalibrierung</td>
+	  </tr>
+	  <tr>
+		<td></td>
+		<td>Fix: Bei der Modulauswahl heißt der Hersteller jetzt "More Enocean Features"</td>
 	  </tr>
 	</table>
   </body>
