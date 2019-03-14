@@ -190,7 +190,7 @@
 						case 80:
 							$this->SetValue("action", 0);
 							$this->SetValue("position", 100);
-							$this->SetValue("movetime", $DownTime);
+							$this->SetValue("movetime", $this->ReadPropertyFloat("DownTime"));
 						    break;
 						case 112:
 							$this->SetValue("action", 0);
