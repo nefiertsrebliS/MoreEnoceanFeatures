@@ -116,6 +116,10 @@
 		<td></td>
 		<td>Fix: Bei der Modulauswahl heißt der Hersteller jetzt "More Enocean Features"</td>
 	  </tr>
+	  <tr>
+		<td>V1.09</td>
+		<td>Fix: undefined variable DownTime</td>
+	  </tr>
 	</table>
   </body>
 </html>
