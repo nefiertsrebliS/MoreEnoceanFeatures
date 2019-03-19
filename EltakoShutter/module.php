@@ -99,7 +99,7 @@
 			}
 			
 #			Filter setzen
-			$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)hexdec($this->ReadPropertyString("ReturnID")).".*");
+			$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)hexdec($this->ReadPropertyString("ReturnID")).",.*");
 
 		}
 		

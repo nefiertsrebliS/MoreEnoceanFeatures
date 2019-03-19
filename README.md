@@ -120,6 +120,10 @@
 		<td>V1.09</td>
 		<td>Fix: undefined variable DownTime</td>
 	  </tr>
+	  <tr>
+		<td>V1.10</td>
+		<td>Fix: ReceiveDataFilter lässt ungewünschte Daten durch</td>
+	  </tr>
 	</table>
   </body>
 </html>
