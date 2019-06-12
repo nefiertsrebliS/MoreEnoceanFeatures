@@ -1,0 +1,15 @@
+{
+	"translations": {
+		"de": { 
+			"DeviceID": "Geräte-ID",
+			"close": "schließen",
+			"close 35%": "35% schließen",
+			"stop": "stop",
+			"open": "öffnen",
+			"teachin": "einlernen",
+			"teachout": "ablernen",
+			"1. fill in the DeviceID above": "1. Tragen Sie die Geräte-ID oben ein",
+			"2. press TEACHIN/TEACHOUT after activating the learnmode on your device": "2. Drücken Sie EINLERNEN/ABLERNEN, nachdem Sie das Gerät in den Lernmodus versetzt haben"
+		}
+	}
+}

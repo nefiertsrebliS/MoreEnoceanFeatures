@@ -1,0 +1,20 @@
+{
+	"elements":
+	[
+		{ "name": "ReturnID", "type": "ValidationTextBox", "caption": "DeviceID" }
+	],
+    "actions":
+    [
+		{ "type": "Label", "caption": "1. fill in the DeviceID above" },
+		{ "type": "Label", "caption": "2. press TEACHIN/TEACHOUT after activating the learnmode on your device" },
+        { "type": "Button", "label": "teachin", "onClick": "MEF_TeachIn($id);" },
+        { "type": "Button", "label": "teachout", "onClick": "MEF_TeachOut($id);" },
+		{ "type": "Label", "caption": "__________________________________________________________________________" },
+		{ "type": "Label", "caption": "" },
+        { "type": "Button", "label": "open", "onClick": "MEF_ShutterMoveUp($id);" },
+        { "type": "Button", "label": "stop", "onClick": "MEF_ShutterStop($id);" },
+        { "type": "Button", "label": "close", "onClick": "MEF_ShutterMoveDown($id);" },
+		{ "type": "Label", "caption": "" },
+        { "type": "Button", "label": "close 35%", "onClick": "MEF_ShutterMoveTo($id, 35);" }
+    ]
+}

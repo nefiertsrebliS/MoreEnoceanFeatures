@@ -1,0 +1,15 @@
+{
+	"id": "{92D9EED7-94B4-AE8D-9BED-BB342C2D4835}",
+	"name": "mEnOceanF EEP D20500",
+	"type": 3,
+	"vendor": "More Enocean Features",
+	"aliases": 
+	[
+		"EEP D2-05-00",
+		"NodOn Shutter"
+	],
+	"parentRequirements": ["{70E3075F-A35D-4DEB-AC20-C929A156FE48}"],
+	"childRequirements": [],
+	"implemented": ["{DE2DA2C0-7A28-4D23-A9AA-6D1C7609C7EC}"],
+	"prefix": "MEF"
+}
