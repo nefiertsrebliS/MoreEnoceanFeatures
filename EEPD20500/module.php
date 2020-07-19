@@ -1,4 +1,4 @@
-<?
+<?php
 	class mEnOceanFEEPD20500 extends IPSModule
 	{
 		public function Create() 
@@ -209,4 +209,3 @@
 		} 
 	}
 
-?>

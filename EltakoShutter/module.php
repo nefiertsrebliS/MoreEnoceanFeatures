@@ -1,4 +1,4 @@
-<?
+<?php
 	class EltakoShutter extends IPSModule
 	{
 		public function Create() 
@@ -385,4 +385,4 @@
 			}
 		} 
 	}
-?>
+
