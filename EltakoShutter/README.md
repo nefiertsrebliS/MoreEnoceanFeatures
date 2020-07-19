@@ -124,6 +124,11 @@
 		<td>V1.10</td>
 		<td>Fix: ReceiveDataFilter lässt ungewünschte Daten durch</td>
 	  </tr>
+	  <tr>
+		<td>V2.01</td>
+		<td>Fix: Kalibrierfehler<br>
+			Fix: Sporadischer Fehler beim Anfahren von Positionen</td>
+	  </tr>
 	</table>
   </body>
 </html>

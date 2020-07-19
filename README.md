@@ -91,6 +91,11 @@
 		<td>V2.00</td>
 		<td>Neu: EEP D2-05-00 für z.B. Nodon Shutter-Modul</td>
 	  </tr>
+	  <tr>
+		<td>V2.01</td>
+		<td>Fix: Kalibrierfehler Eltako Shutter<br>
+			Fix: Sporadischer Fehler beim Anfahren von Positionen (Eltako Shutter)</td>
+	  </tr>
 	</table>
   </body>
 </html>

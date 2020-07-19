@@ -139,7 +139,7 @@
 
 #				ShutterDevice liefert Richtung und Fahrzeit
                 case "165":
-					$dt = (int)$data->DataByte2 + (int)$data->DataByte3 * 255;
+					$dt = ((int)$data->DataByte2 + (int)$data->DataByte3 * 255) / 10;
 					$DownTime = $this->ReadPropertyFloat("DownTime");
 					$UpTime = $this->ReadPropertyFloat("UpTime");
 					$RollFactor = $this->ReadPropertyFloat("RollFactor");
@@ -147,34 +147,27 @@
 					switch($data->DataByte1) {
 						case 1:
 #							neue Fahrzeit für 0 bis aktuelle Position ermitteln
-							$dt = $dt / 10 / $UpTime * $DownTime;
+							$dt = $dt / $UpTime * $DownTime;
 							$newValue = $this->GetValue("movetime") - $dt;
 							if($newValue < 0)$newValue = 0;
 							$this->SetValue("movetime", $newValue);
-
-#							Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
-							$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
-
-#							neue Position ermitteln
-							$newPosition = round($newValue / $DownTime * 100 * $Factor);
-							$this->SetValue("position", $newPosition);
 						    break;
 						case 2:
 #							neue Fahrzeit für 0 bis aktuelle Position ermitteln
-							$dt = $dt / 10;
 							$newValue = $this->GetValue("movetime") + $dt;
 							if($newValue > $DownTime)$newValue = $DownTime;
 							$this->SetValue("movetime", $newValue);
-
-#							Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
-							$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
-
-#							neue Position ermitteln
-							$newPosition = round($newValue / $DownTime * 100 * $Factor);
-							$this->SetValue("position", $newPosition);
 						    break;
 						default:
 					}
+
+#					Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
+					$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
+
+#					neue Position ermitteln
+					$newPosition = round($newValue / $DownTime * 100 * $Factor);
+					$this->SetValue("position", $newPosition);
+
 					$this->SetValue("action", 0);
                     break;
 
@@ -250,8 +243,6 @@
         public function ShutterCalibrate() 
 		{
 			$this->SetBuffer("Calibrate", "true");
-								IPS_SetProperty ($this->InstanceID, "DownTime", 22.1);
-								IPS_ApplyChanges ($this->InstanceID);
 			$this->ShutterStop();
         }
 		
@@ -283,22 +274,30 @@
 		
         public function ShutterMoveDownEx(float $movetime) 
 		{
+			$movetime *= 10;
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
-			$data->DataByte2 = round($movetime*10);
+			$data->DataByte3 = floor($movetime/255);
+			$movetime -= $data->DataByte3 * 255;
+			$data->DataByte2 = round($movetime);
 			$data->DataByte1 = 2;
 			$data->DataByte0 = 10;
 			$this->SendData(json_encode($data));
+			return;
         }
 		
         public function ShutterMoveUpEx(float $movetime) 
 		{
+			$movetime *= 10;
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
-			$data->DataByte2 = round($movetime*10);
+			$data->DataByte3 = floor($movetime/255);
+			$movetime -= $data->DataByte3 * 255;
+			$data->DataByte2 = round($movetime);
 			$data->DataByte1 = 1;
 			$data->DataByte0 = 10;
 			$this->SendData(json_encode($data));
+			return;
         }
 		
         public function ShutterStepUp() 
@@ -313,6 +312,7 @@
 		
         public function ShutterMoveTo(int $position) 
 		{
+			if($position == $this->GetValue("position"))return;
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
 
@@ -345,13 +345,13 @@
 			$oldTime = $this->GetValue("movetime");
 
 #			Movetime und Direction bestimmen
-			$moveTime = round($newTime - $oldTime,1);
+			$moveTime = $newTime - $oldTime;
 
 			if($moveTime > 0){
-				$this->ShutterMoveDownEx($moveTime);
+				$this->ShutterMoveDownEx(round($moveTime,1));
 			}elseif($moveTime < 0){
 				$moveTime = abs($moveTime * $UpTime / $DownTime);
-				$this->ShutterMoveUpEx($moveTime);
+				$this->ShutterMoveUpEx(round($moveTime,1));
 			}else{
 				return;
 			}
