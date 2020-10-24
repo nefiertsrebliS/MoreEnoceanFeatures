@@ -1,0 +1,15 @@
+{
+	"id": "{25C79D60-FFA5-2643-FC9D-968A60A80208}",
+	"name": "mEnOceanF_EEP_A53808_7",
+	"type": 3,
+	"vendor": "More Enocean Features",
+	"aliases": 
+	[
+		"EEP A5-38-08-7",
+		"A5-38-08 Blinds"
+	],
+	"parentRequirements": ["{70E3075F-A35D-4DEB-AC20-C929A156FE48}"],
+	"childRequirements": [],
+	"implemented": ["{DE2DA2C0-7A28-4D23-A9AA-6D1C7609C7EC}"],
+	"prefix": "MEF"
+}

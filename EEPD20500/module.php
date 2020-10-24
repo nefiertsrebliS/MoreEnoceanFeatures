@@ -64,7 +64,7 @@
 	            case "210":
 					$position = $data->DataByte3;
 					$this->SendDebug("Received Position", $position."%", 0);
-					SetValue($this->GetIDForIdent("Position"), $position);	
+					$this->SetValue("Position", $position);	
 	                break;
 	            default:
 					$this->LogMessage("Unknown Message", KL_ERROR);

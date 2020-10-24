@@ -96,6 +96,11 @@
 		<td>Fix: Kalibrierfehler Eltako Shutter<br>
 			Fix: Sporadischer Fehler beim Anfahren von Positionen (Eltako Shutter)</td>
 	  </tr>
+	  <tr>
+		<td>V3.00</td>
+		<td>Neu: EEP A5-38-08 Erweiterung für Rollläden<br>
+			Fix: Umstellung SetValue</td>
+	  </tr>
 	</table>
   </body>
 </html>
