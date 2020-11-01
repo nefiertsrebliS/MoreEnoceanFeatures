@@ -58,9 +58,25 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
 
         switch($data->Device) {
             case "165": 
-                $position = $data->DataByte2;
+                $position = $data->DataByte3;
                 $this->SendDebug("Received Position", $position."%", 0);
 				$this->SetValue("Position", $position);	
+
+                $status = $data->DataByte1%4;
+				if($status > 0){
+		            $this->SendDebug("Received Status", $status, 0);
+					if (!IPS_VariableProfileExists('ShutterStatus.MEF')) {
+						IPS_CreateVariableProfile('ShutterStatus.MEF', 1);
+						IPS_SetVariableProfileIcon('ShutterStatus.MEF', 'Power');
+						IPS_SetVariableProfileAssociation('ShutterStatus.MEF', 1, $this->Translate('stop'), '',-1);
+						IPS_SetVariableProfileAssociation('ShutterStatus.MEF', 2, $this->Translate('open'), '',-1);
+						IPS_SetVariableProfileAssociation('ShutterStatus.MEF', 3, $this->Translate('close'), '',-1);
+						IPS_SetVariableProfileValues('ShutterStatus.MEF', 1, 3, 1);
+					}
+				    $this->RegisterVariableInteger('Command', $this->Translate('Command'), 'ShutterStatus.MEF', 0);
+				    $this->EnableAction('Command');
+					$this->SetValue("Command", $status);	
+				}
                 break;
             default:
                 $this->LogMessage("Unknown Message", KL_ERROR);
@@ -72,6 +88,21 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
         switch($Ident) {
             case "Position":
                 $this->ShutterMoveTo($Value);
+                break;
+            case "Command":
+				switch($Value) {
+				    case 1:
+				        $this->ShutterStop();
+				        break;
+				    case 2:
+				        $this->ShutterMoveUp();
+				        break;
+				    case 3:
+				        $this->ShutterMoveDown();
+				        break;
+				    default:
+				        throw new Exception("Invalid Value");
+				}
                 break;
             default:
                 throw new Exception("Invalid Ident");
@@ -96,11 +127,17 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
     public function ShutterMoveDown(){
-        $this->ShutterMoveTo(100);
+        $data = json_decode($this->ReadPropertyString("BaseData"));
+        $data->DataByte0 = 56; 
+        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+        $this->SendData(json_encode($data));
     }
 
     public function ShutterMoveUp(){
-        $this->ShutterMoveTo(0);
+        $data = json_decode($this->ReadPropertyString("BaseData"));
+        $data->DataByte0 = 40; 
+        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+        $this->SendData(json_encode($data));
     }
 
     public function UpdatePosition(){
@@ -125,14 +162,16 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
 
     public function TeachIn(){
         $data = json_decode($this->ReadPropertyString("BaseData"));
+        $data->DataByte0 = 128;
+        $data->DataByte1 = 255;
+        $data->DataByte2 = 71;
+        $data->DataByte3 = 224;
         $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
         $this->SendData(json_encode($data));
     }
 
     public function TeachOut(){
-        $data = json_decode($this->ReadPropertyString("BaseData"));
-        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
-        $this->SendData(json_encode($data));
+        $this->TeachIn();
     }
 
     protected function SendData($data){
