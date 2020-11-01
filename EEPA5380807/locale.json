@@ -1,6 +1,8 @@
 {
 	"translations": {
 		"de": { 
+			"Command": "Befehl",
+			"Position": "Position",
 			"DeviceID": "Ger‰te-ID",
 			"close": "schlieﬂen",
 			"close 35%": "35% schlieﬂen",
