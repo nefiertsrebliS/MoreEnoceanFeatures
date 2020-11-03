@@ -21,6 +21,14 @@
 		<li>Kalibrier- und Alarmwerte setzen</li>
 	</ol>
 	Die Winkelverstellung von Jalousien wird noch nicht unterstützt.
+	<h2>EEP A5-38-08 Blinds</h2>
+	Das Modul wurde für <b>EEP A5-38-08 kompartible Shutter-Module</b> entwickelt.<br>
+	Das Modul unterstützt folgende Funktionen:
+	<ol>
+		<li>Rolladenposition prozentgenau anfahren</li>
+		<li>Kalibrierwerte setzen</li>
+	</ol>
+	Die Winkelverstellung von Jalousien wird noch nicht unterstützt.
 	<h2>Changelog</h2>
 	<table>
 	  <tr>
@@ -104,6 +112,10 @@
 	  <tr>
 		<td>V3.01</td>
 		<td>Fix: Filterproblem bei 64-bit Windows-Systemen</td>
+	  </tr>
+	  <tr>
+		<td>V3.02</td>
+		<td>Neu: Eltako Shutter - Anfahren von Lamellenwinkeln</td>
 	  </tr>
 	</table>
   </body>

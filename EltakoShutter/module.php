@@ -11,6 +11,7 @@
 			$this->RegisterPropertyFloat("UpTime", 1.0);
 			$this->RegisterPropertyFloat("RollFactor", 1.0);
 			$this->RegisterPropertyFloat("StepTime", 0.1);
+			$this->RegisterPropertyFloat("SlatTurnTime", 0.0);
 			$this->SetBuffer("Calibrate", "false");
 
 			$this->RegisterPropertyString("BaseData", '{
@@ -73,29 +74,41 @@
 			//Never delete this line!
 			parent::ApplyChanges();
 			
-			$this->RegisterVariableInteger("action", "Aktion", "ShutterMoveStop.MEF");
-			$this->RegisterVariableInteger("position", "Position", "~Shutter");
-			$this->RegisterVariableFloat("movetime", "Fahrzeit", "ShutterMoveTime.MEF");
+			$this->RegisterVariableInteger("action", $this->Translate("Action"), "ShutterMoveStop.MEF");
+			$this->RegisterVariableInteger("position", $this->Translate("Position"), "~Shutter");
+			$this->RegisterVariableFloat("movetime", $this->Translate("Travel time"), "ShutterMoveTime.MEF");
 			
 			$this->EnableAction("action");	
 			$this->EnableAction("position");	
 
 #			Falsche Werte abfangen
-			if($this->ReadPropertyFloat("DownTime")<1){
+			if($this->ReadPropertyFloat("DownTime") < 1){
 				IPS_SetProperty ($this->InstanceID, "DownTime", 1);
 				IPS_ApplyChanges ($this->InstanceID);
 			}
-			if($this->ReadPropertyFloat("UpTime")<1){
+			if($this->ReadPropertyFloat("UpTime") < 1){
 				IPS_SetProperty ($this->InstanceID, "UpTime", 1);
 				IPS_ApplyChanges ($this->InstanceID);
 			}
-			if($this->ReadPropertyFloat("RollFactor")<1){
+			if($this->ReadPropertyFloat("RollFactor") < 1){
 				IPS_SetProperty ($this->InstanceID, "RollFactor", 1);
 				IPS_ApplyChanges ($this->InstanceID);
 			}
-			if($this->ReadPropertyFloat("StepTime")<0.1){
+			if($this->ReadPropertyFloat("StepTime") < 0.1){
 				IPS_SetProperty ($this->InstanceID, "StepTime", 0.1);
 				IPS_ApplyChanges ($this->InstanceID);
+			}
+			if($this->ReadPropertyFloat("SlatTurnTime") < 0){
+				IPS_SetProperty ($this->InstanceID, "SlatTurnTime", 0);
+				IPS_ApplyChanges ($this->InstanceID);
+			}
+
+
+			if($this->ReadPropertyFloat("SlatTurnTime") > 0){
+				$this->RegisterVariableInteger("slatangle", $this->Translate("Slat Angle"), "~Intensity.100");
+				$this->EnableAction("slatangle");	
+			}else{
+				$this->UnRegisterVariable("slatangle");
 			}
 			
 #			Filter setzen
@@ -148,6 +161,12 @@
 
 					switch($data->DataByte1) {
 						case 1:
+#							Lamellenwinkel bei Jalousien ermitteln
+							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
+								$newAngle = $this->GetValue("slatangle") - $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100;
+								$this->SetValue("slatangle", ($newAngle < 0)?0:$newAngle);
+							}
+
 #							neue Fahrzeit für 0 bis aktuelle Position ermitteln
 							$dt = $dt / $UpTime * $DownTime;
 							$newValue = $this->GetValue("movetime") - $dt;
@@ -155,6 +174,12 @@
 							$this->SetValue("movetime", $newValue);
 						    break;
 						case 2:
+#							Lamellenwinkel bei Jalousien ermitteln
+							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
+								$newAngle = $this->GetValue("slatangle") + $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100;
+								$this->SetValue("slatangle", ($newAngle > 100)?100:$newAngle);
+							}
+
 #							neue Fahrzeit für 0 bis aktuelle Position ermitteln
 							$newValue = $this->GetValue("movetime") + $dt;
 							if($newValue > $DownTime)$newValue = $DownTime;
@@ -225,6 +250,9 @@
                     break;
                 case "position":
 					$this->ShutterMoveTo($Value);
+                    break;
+                case "slatangle":
+					$this->SetSlatAngle($Value);
                     break;
                 default:
                     throw new Exception("Invalid Ident");
@@ -314,15 +342,13 @@
 		
         public function ShutterMoveTo(int $position) 
 		{
-			if($position == $this->GetValue("position"))return;
-			$data = json_decode($this->ReadPropertyString("BaseData"));
-			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
-
-#			Sicherstellen, dass der Rollladen aktuell nicht fährt
-			
+#			Sicherstellen, dass der Aktor aktuell nicht fährt
 			if($this->GetValue("action")<>0) $this->ShutterStop();
-			for($i=0; $i<50; $i++){
-				if($this->GetValue("action")==0)break;
+			for($i=0; $i<200; $i++){
+				if($this->GetValue("action")==0){
+					$dt = time() - IPS_GetVariable($this->GetIDForIdent("action"))['VariableChanged'];
+					if($dt > 4) break;
+				}
 				IPS_Sleep(100);
 			}
 			if($this->GetValue("action")<>0){
@@ -330,6 +356,10 @@
                 echo"EltakoShutter".chr(10)."Keine Rückmeldung vom Aktor!";
 				return;
 			}
+
+			if($position == $this->GetValue("position"))return;
+			$data = json_decode($this->ReadPropertyString("BaseData"));
+			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
 
 #			Zeit für Zielposition holen
 			$DownTime = $this->ReadPropertyFloat("DownTime");
@@ -354,6 +384,44 @@
 			}elseif($moveTime < 0){
 				$moveTime = abs($moveTime * $UpTime / $DownTime);
 				$this->ShutterMoveUpEx(round($moveTime,1));
+			}else{
+				return;
+			}
+        }
+		
+        public function SetSlatAngle(int $angle) 
+		{
+
+#			Abbrechen, wenn Wendedauer nicht gesetzt
+			if($this->ReadPropertyFloat("SlatTurnTime") == 0)return;
+
+#			Sicherstellen, dass der Aktor aktuell nicht fährt
+			if($this->GetValue("action")<>0) $this->ShutterStop();
+			for($i=0; $i<200; $i++){
+				if($this->GetValue("action")==0){
+					$dt = time() - IPS_GetVariable($this->GetIDForIdent("action"))['VariableChanged'];
+					if($dt > 4) break;
+				}
+				IPS_Sleep(100);
+			}
+			if($this->GetValue("action")<>0){
+				$this->LogMessage("Keine Rückmeldung vom Aktor!", KL_ERROR);
+                echo"EltakoShutter".chr(10)."Keine Rückmeldung vom Aktor!";
+				return;
+			}
+
+			if($angle == $this->GetValue("slatangle"))return;
+			$data = json_decode($this->ReadPropertyString("BaseData"));
+			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
+			$moveTime = round(($angle - $this->GetValue("slatangle")) / 100 * $this->ReadPropertyFloat("SlatTurnTime") ,1);
+
+			if ($moveTime > 0){
+			}
+
+			if($moveTime > 0){
+				$this->ShutterMoveDownEx($moveTime);
+			}elseif($moveTime < 0){
+				$this->ShutterMoveUpEx(-$moveTime);
 			}else{
 				return;
 			}

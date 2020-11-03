@@ -1,0 +1,35 @@
+{
+	"translations": {
+		"de": { 
+			"DeviceID": "Geräte-ID",
+			"ReturnID": "Melde-ID",
+			"Travel time down (0-100%) in sec":"Fahrzeit Schließen (0-100%) in sec",
+			"Travel time up (100-0%) in sec":"Fahrzeit Öffnen (100-0%) in sec",
+			"Winding factor": "Wickelfaktor",
+			"Step time in sec": "Schrittdauer in sec",
+			"Slat turning time (0-100%) in sec": "Wendedauer der Lamelle (0-100%) in sec",
+			"Action": "Aktion",
+			"Position": "Position",
+			"Travel time": "Fahrzeit",
+			"Slat Angle": "Lamellenwinkel",
+
+			"close": "schließen",
+			"step close": "Schritt schließen",
+			"step open": "Schritt öffnen",
+			"start": "starten",
+			"stop": "stop",
+			"open": "öffnen",
+			"teachin": "einlernen",
+			"calibrate": "kalibrieren",
+			"Travel time down":"Fahrzeit Schließen",
+			"1. Open the Shutter/Blind COMPLETELY":"1. Rollladen/Jalousie VOLLSTÄNDIG öffnen",
+			"2. Start calibration":"2. Kalibrierung starten",
+			"3. For exact calibration, press the calibration button IMMEDIATELY when the roller shutter is completely closed":"3. Zur exakten Kalibrierung die Kalibriertaste SOFORT drücken, wenn der Rollladen vollständig geschlossen ist",
+			"Travel time up":"Fahrzeit Öffnen",
+			"1. Close the Shutter/Blind COMPLETELY":"1. Rollladen/Jalousie VOLLSTÄNDIG schließen",
+			"3. For exact calibration, press the calibration button IMMEDIATELY when the roller shutter is completely opened":"3. Zur exakten Kalibrierung die Kalibriertaste SOFORT drücken, wenn der Rollladen vollständig geöffnet ist",
+			"1. fill in the DeviceID above": "1. Tragen Sie die Geräte-ID oben ein",
+			"2. press TEACHIN after activating the learnmode on your device": "2. Drücken Sie EINLERNEN, nachdem Sie das Gerät in den Lernmodus versetzt haben"
+		}
+	}
+}

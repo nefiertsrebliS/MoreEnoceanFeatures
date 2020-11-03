@@ -1,44 +1,46 @@
 {
 	"elements":
 	[
-		{ "name": "DeviceID", "type": "NumberSpinner", "caption": "DeviceID:" },
-		{ "name": "ReturnID", "type": "ValidationTextBox", "caption": "ReturnID:" },
-		{ "name": "DownTime", "type": "NumberSpinner", "caption": "Fahrzeit Schließen (0-100%) in sec:", "digits": 1 },
-		{ "name": "UpTime", "type": "NumberSpinner", "caption": "Fahrzeit Öffnen (100-0%) in sec:", "digits": 1 },
-		{ "name": "RollFactor", "type": "NumberSpinner", "caption": "Wickelfaktor:", "digits": 2 },
-		{ "name": "StepTime", "type": "NumberSpinner", "caption": "Schrittdauer in sec:", "digits": 1 }
+		{ "name": "DeviceID", "type": "NumberSpinner", "caption": "DeviceID" },
+		{ "name": "ReturnID", "type": "ValidationTextBox", "caption": "ReturnID" },
+		{ "name": "DownTime", "type": "NumberSpinner", "caption": "Travel time down (0-100%) in sec", "digits": 1 },
+		{ "name": "UpTime", "type": "NumberSpinner", "caption": "Travel time up (100-0%) in sec", "digits": 1 },
+		{ "name": "RollFactor", "type": "NumberSpinner", "caption": "Winding factor", "digits": 2 },
+		{ "name": "StepTime", "type": "NumberSpinner", "caption": "Step time in sec", "digits": 1 },
+		{ "name": "SlatTurnTime", "type": "NumberSpinner", "caption": "Slat turning time (0-100%) in sec", "digits": 1 }
 	],
     "actions":
     [
-		{ "type": "Label", "caption": "Drücken Sie EINLERNEN, nachdem Sie das Gerät in den Lernmodus versetzt haben" },
-        { "type": "Button", "label": "einlernen", "onClick": "MEF_Learn($id);" },
-		{ "type": "PopupButton", "caption": "Kalibrieren","popup": 
+		{ "type": "Label", "caption": "1. fill in the DeviceID above" },
+		{ "type": "Label", "caption": "2. press TEACHIN after activating the learnmode on your device" },
+        { "type": "Button", "label": "teachin", "onClick": "MEF_Learn($id);" },
+		{ "type": "PopupButton", "caption": "calibrate","popup": 
 			{"caption": "Kalibrieren","items": 
 				[
-					{ "type": "Label", "caption": "FAHRZEIT SCHLIESSEN" },
-					{ "type": "Label", "caption": "1. Rollladen VOLLSTÄNDIG öffnen" },
-					{ "type": "Button", "label": "öffnen", "onClick": "MEF_ShutterMoveUp($id);" },
-					{ "type": "Label", "caption": "2. Kalibrierung starten" },
-					{ "type": "Button", "label": "Starten", "onClick": "MEF_ShutterMoveDown($id);" },
-					{ "type": "Label", "caption": "3. Zur exakten Kalibrierung die Kalibriertaste SOFORT drücken, wenn der Rollladen vollständig geschlossen ist" },
-					{ "type": "Button", "label": "Kalibrieren", "onClick": "MEF_ShutterCalibrate($id);" },
+					{ "type": "Label", "caption": "Travel time down" },
+					{ "type": "Label", "caption": "1. Open the Shutter/Blind COMPLETELY" },
+					{ "type": "Button", "label": "open", "onClick": "MEF_ShutterMoveUp($id);" },
+					{ "type": "Label", "caption": "2. Start calibration" },
+					{ "type": "Button", "label": "start", "onClick": "MEF_ShutterMoveDown($id);" },
+					{ "type": "Label", "caption": "3. For exact calibration, press the calibration button IMMEDIATELY when the roller shutter is completely closed" },
+					{ "type": "Button", "label": "calibrate", "onClick": "MEF_ShutterCalibrate($id);" },
 					{ "type": "Label", "caption": "__________________________________________________________________________" },
 					{ "type": "Label", "caption": "" },
-					{ "type": "Label", "caption": "FAHRZEIT ÖFFNEN" },
-					{ "type": "Label", "caption": "1. Rollladen VOLLSTÄNDIG schließen" },
-					{ "type": "Button", "label": "schließen", "onClick": "MEF_ShutterMoveDown($id);" },
-					{ "type": "Label", "caption": "2. Kalibrierung starten" },
+					{ "type": "Label", "caption": "Travel time up" },
+					{ "type": "Label", "caption": "1. Close the Shutter/Blind COMPLETELY" },
+					{ "type": "Button", "label": "close", "onClick": "MEF_ShutterMoveDown($id);" },
+					{ "type": "Label", "caption": "2. Start calibration" },
 					{ "type": "Button", "label": "Starten", "onClick": "MEF_ShutterMoveUp($id);" },
-					{ "type": "Label", "caption": "3. Zur exakten Kalibrierung die Kalibriertaste SOFORT drücken, wenn der Rollladen vollständig geöffnet ist" },
-					{ "type": "Button", "label": "Kalibrieren", "onClick": "MEF_ShutterCalibrate($id);" }
+					{ "type": "Label", "caption": "3. For exact calibration, press the calibration button IMMEDIATELY when the roller shutter is completely opened" },
+					{ "type": "Button", "label": "calibrate", "onClick": "MEF_ShutterCalibrate($id);" }
 				]
 		    }
 		},
 		{ "type": "Label", "caption": "__________________________________________________________________________" },
-        { "type": "Button", "label": "öffnen", "onClick": "MEF_ShutterMoveUp($id);" },
-        { "type": "Button", "label": "Schritt öffnen", "onClick": "MEF_ShutterStepUp($id);" },
+        { "type": "Button", "label": "open", "onClick": "MEF_ShutterMoveUp($id);" },
+        { "type": "Button", "label": "step open", "onClick": "MEF_ShutterStepUp($id);" },
         { "type": "Button", "label": "stop", "onClick": "MEF_ShutterStop($id);" },
-        { "type": "Button", "label": "Schritt schließen", "onClick": "MEF_ShutterStepDown($id);" },
-        { "type": "Button", "label": "schließen", "onClick": "MEF_ShutterMoveDown($id);" }
+        { "type": "Button", "label": "step close", "onClick": "MEF_ShutterStepDown($id);" },
+        { "type": "Button", "label": "close", "onClick": "MEF_ShutterMoveDown($id);" }
     ]
 }

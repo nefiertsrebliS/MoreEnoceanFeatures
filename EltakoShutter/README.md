@@ -57,6 +57,16 @@
 		<td><b><i>MEF_ShutterStepDown($ID)</i></b></td>
 		<td>Einen Schritt schließen (siehe Einstellung <i>Schrittdauer in sec:</i>)</td>
 	  </tr>
+	  <tr>
+		<td>4.&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><b><i>MEF_ShutterMoveUpEx/MEF_ShutterMoveDownEx($ID, $seconds)</i></b>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td>x Sekunden öffnen/schließen</td>
+	  </tr>
+	  <tr>
+		<td>5.&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><b><i>MEF_SetSlatAngle($ID, $angle)</i></b>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td>Anfahren des gewählten Lamellenwinkels</td>
+	  </tr>
 	</table>
 	<h2>Changelog</h2>
 	<table>
@@ -128,6 +138,14 @@
 		<td>V2.01</td>
 		<td>Fix: Kalibrierfehler<br>
 			Fix: Sporadischer Fehler beim Anfahren von Positionen</td>
+	  </tr>
+	  <tr>
+		<td>V3.01</td>
+		<td>Fix: Filterfehler bei 64-bit-Systemen</td>
+	  </tr>
+	  <tr>
+		<td>V3.02</td>
+		<td>Neu: Anfahren von Lamellenwinkeln</td>
 	  </tr>
 	</table>
   </body>
