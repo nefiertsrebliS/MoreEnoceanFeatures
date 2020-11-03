@@ -99,8 +99,10 @@
 			}
 			
 #			Filter setzen
-			$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)hexdec($this->ReadPropertyString("ReturnID")).",.*");
-
+			$ID = hexdec($this->ReadPropertyString("ReturnID"));
+			if($ID & 0x80000000)$ID -=  0x100000000;
+			$this->SendDebug("DeviceID", (int)$ID, 0);
+			$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)$ID.",.*");
 		}
 		
 		public function ReceiveData($JSONString)

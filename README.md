@@ -101,6 +101,10 @@
 		<td>Neu: EEP A5-38-08 Erweiterung für Rollläden<br>
 			Fix: Umstellung SetValue</td>
 	  </tr>
+	  <tr>
+		<td>V3.01</td>
+		<td>Fix: Filterproblem bei 64-bit Windows-Systemen</td>
+	  </tr>
 	</table>
   </body>
 </html>
