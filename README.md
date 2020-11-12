@@ -117,6 +117,10 @@
 		<td>V3.02</td>
 		<td>Neu: Eltako Shutter - Anfahren von Lamellenwinkeln</td>
 	  </tr>
+	  <tr>
+		<td>V3.03</td>
+		<td>Neu: Eltako Shutter - Lamellenverstellung ohne Verfahrweg</td>
+	  </tr>
 	</table>
   </body>
 </html>

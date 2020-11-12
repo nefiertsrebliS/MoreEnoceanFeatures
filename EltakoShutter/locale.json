@@ -12,7 +12,7 @@
 			"Position": "Position",
 			"Travel time": "Fahrzeit",
 			"Slat Angle": "Lamellenwinkel",
-
+			"Slat turning without travel": "Lamellenverstellung ohne Verfahrweg",
 			"close": "schließen",
 			"step close": "Schritt schließen",
 			"step open": "Schritt öffnen",

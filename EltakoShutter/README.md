@@ -147,6 +147,10 @@
 		<td>V3.02</td>
 		<td>Neu: Anfahren von Lamellenwinkeln</td>
 	  </tr>
+	  <tr>
+		<td>V3.03</td>
+		<td>Neu: Option Lamellenverstellung ohne Verfahrweg</td>
+	  </tr>
 	</table>
   </body>
 </html>

@@ -7,7 +7,8 @@
 		{ "name": "UpTime", "type": "NumberSpinner", "caption": "Travel time up (100-0%) in sec", "digits": 1 },
 		{ "name": "RollFactor", "type": "NumberSpinner", "caption": "Winding factor", "digits": 2 },
 		{ "name": "StepTime", "type": "NumberSpinner", "caption": "Step time in sec", "digits": 1 },
-		{ "name": "SlatTurnTime", "type": "NumberSpinner", "caption": "Slat turning time (0-100%) in sec", "digits": 1 }
+		{ "name": "SlatTurnTime", "type": "NumberSpinner", "caption": "Slat turning time (0-100%) in sec", "digits": 1 },
+		{ "name": "TurnWithoutTravel", "type": "CheckBox", "caption": "Slat turning without travel"}
 	],
     "actions":
     [

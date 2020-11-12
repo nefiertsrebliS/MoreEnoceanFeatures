@@ -12,6 +12,7 @@
 			$this->RegisterPropertyFloat("RollFactor", 1.0);
 			$this->RegisterPropertyFloat("StepTime", 0.1);
 			$this->RegisterPropertyFloat("SlatTurnTime", 0.0);
+			$this->RegisterPropertyBoolean("TurnWithoutTravel", false);
 			$this->SetBuffer("Calibrate", "false");
 
 			$this->RegisterPropertyString("BaseData", '{
@@ -158,13 +159,22 @@
 					$DownTime = $this->ReadPropertyFloat("DownTime");
 					$UpTime = $this->ReadPropertyFloat("UpTime");
 					$RollFactor = $this->ReadPropertyFloat("RollFactor");
+					$oldAngle = $this->GetValue("slatangle");
 
 					switch($data->DataByte1) {
 						case 1:
 #							Lamellenwinkel bei Jalousien ermitteln
 							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
-								$newAngle = $this->GetValue("slatangle") - $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100;
+								$newAngle = $oldAngle - $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100;
 								$this->SetValue("slatangle", ($newAngle < 0)?0:$newAngle);
+
+#								Lamellenwinkel und Verfahren getrennt?
+								if($this->ReadPropertyBoolean("TurnWithoutTravel")){
+									$TurnTime = round(($oldAngle - $this->GetValue("slatangle")) * $this->ReadPropertyFloat("SlatTurnTime") / 100 ,1);
+									$dt = ($dt > $TurnTime)? $dt - $TurnTime : 0;
+									$DownTime -= $this->ReadPropertyFloat("SlatTurnTime");
+									$UpTime -= $this->ReadPropertyFloat("SlatTurnTime");
+								}
 							}
 
 #							neue Fahrzeit für 0 bis aktuelle Position ermitteln
@@ -176,8 +186,16 @@
 						case 2:
 #							Lamellenwinkel bei Jalousien ermitteln
 							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
-								$newAngle = $this->GetValue("slatangle") + $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100;
+								$newAngle = $oldAngle + $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100;
 								$this->SetValue("slatangle", ($newAngle > 100)?100:$newAngle);
+
+#								Lamellenwinkel und Verfahren getrennt?
+								if($this->ReadPropertyBoolean("TurnWithoutTravel")){
+									$TurnTime = round(($this->GetValue("slatangle") - $oldAngle) * $this->ReadPropertyFloat("SlatTurnTime") / 100 ,1);
+									$dt = ($dt > $TurnTime)? $dt - $TurnTime : 0;
+									$DownTime -= $this->ReadPropertyFloat("SlatTurnTime");
+									$UpTime -= $this->ReadPropertyFloat("SlatTurnTime");
+								}
 							}
 
 #							neue Fahrzeit für 0 bis aktuelle Position ermitteln
@@ -210,12 +228,16 @@
 						case 80:
 							$this->SetValue("action", 0);
 							$this->SetValue("position", 100);
-							$this->SetValue("movetime", $this->ReadPropertyFloat("DownTime"));
+							$DownTime = $this->ReadPropertyFloat("DownTime");
+							if($this->ReadPropertyBoolean("TurnWithoutTravel"))$DownTime -= $this->ReadPropertyFloat("SlatTurnTime");
+							$this->SetValue("movetime", $DownTime);
+							$this->SetValue("slatangle", 100);
 						    break;
 						case 112:
 							$this->SetValue("action", 0);
 							$this->SetValue("position", 0);
 							$this->SetValue("movetime", 0);
+							$this->SetValue("slatangle", 0);
 						    break;
 						default:
 					}
