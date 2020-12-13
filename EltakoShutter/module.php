@@ -82,29 +82,6 @@
 			$this->EnableAction("action");	
 			$this->EnableAction("position");	
 
-#			Falsche Werte abfangen
-			if($this->ReadPropertyFloat("DownTime") < 1){
-				IPS_SetProperty ($this->InstanceID, "DownTime", 1);
-				IPS_ApplyChanges ($this->InstanceID);
-			}
-			if($this->ReadPropertyFloat("UpTime") < 1){
-				IPS_SetProperty ($this->InstanceID, "UpTime", 1);
-				IPS_ApplyChanges ($this->InstanceID);
-			}
-			if($this->ReadPropertyFloat("RollFactor") < 1){
-				IPS_SetProperty ($this->InstanceID, "RollFactor", 1);
-				IPS_ApplyChanges ($this->InstanceID);
-			}
-			if($this->ReadPropertyFloat("StepTime") < 0.1){
-				IPS_SetProperty ($this->InstanceID, "StepTime", 0.1);
-				IPS_ApplyChanges ($this->InstanceID);
-			}
-			if($this->ReadPropertyFloat("SlatTurnTime") < 0){
-				IPS_SetProperty ($this->InstanceID, "SlatTurnTime", 0);
-				IPS_ApplyChanges ($this->InstanceID);
-			}
-
-
 			if($this->ReadPropertyFloat("SlatTurnTime") > 0){
 				$this->RegisterVariableInteger("slatangle", $this->Translate("Slat Angle"), "~Intensity.100");
 				$this->EnableAction("slatangle");	
