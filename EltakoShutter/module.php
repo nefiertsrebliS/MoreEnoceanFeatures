@@ -1,7 +1,7 @@
 <?php
 	class EltakoShutter extends IPSModule
 	{
-		public function Create() 
+		public function Create()
 		{
 			//Never delete this line!
 			parent::Create();
@@ -37,10 +37,10 @@
 				"DataByte0":0
 			}');
 
-			
+
 			//Connect to available enocean gateway
 			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
-			
+
 #			Fehlende Profile erzeugen
 			if (!IPS_VariableProfileExists('ShutterMoveStop.MEF')) {
 				IPS_CreateVariableProfile('ShutterMoveStop.MEF', 1);
@@ -69,33 +69,35 @@
 		    parent::Destroy();
 
 		}
-    
+
 		public function ApplyChanges()
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
-			
+
 			$this->RegisterVariableInteger("action", $this->Translate("Action"), "ShutterMoveStop.MEF");
 			$this->RegisterVariableInteger("position", $this->Translate("Position"), "~Shutter");
 			$this->RegisterVariableFloat("movetime", $this->Translate("Travel time"), "ShutterMoveTime.MEF");
-			
-			$this->EnableAction("action");	
-			$this->EnableAction("position");	
+
+			$this->EnableAction("action");
+			$this->EnableAction("position");
 
 			if($this->ReadPropertyFloat("SlatTurnTime") > 0){
 				$this->RegisterVariableInteger("slatangle", $this->Translate("Slat Angle"), "~Intensity.100");
-				$this->EnableAction("slatangle");	
+				$this->EnableAction("slatangle");
+				$this->UpdateFormField("TurnWithoutTravel", "visible", true);
 			}else{
 				$this->UnRegisterVariable("slatangle");
+				$this->UpdateFormField("TurnWithoutTravel", "visible", false);
 			}
-			
+
 #			Filter setzen
 			$ID = hexdec($this->ReadPropertyString("ReturnID"));
 			if($ID & 0x80000000)$ID -=  0x100000000;
 			$this->SendDebug("DeviceID", (int)$ID, 0);
 			$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)$ID.",.*");
 		}
-		
+
 		public function ReceiveData($JSONString)
 		{
 			$this->SendDebug("Receive", $JSONString, 0);
@@ -136,7 +138,7 @@
 					$DownTime = $this->ReadPropertyFloat("DownTime");
 					$UpTime = $this->ReadPropertyFloat("UpTime");
 					$RollFactor = $this->ReadPropertyFloat("RollFactor");
-					$oldAngle = $this->GetValue("slatangle");
+					if($this->ReadPropertyFloat("SlatTurnTime") > 0)$oldAngle = $this->GetValue("slatangle");
 
 					switch($data->DataByte1) {
 						case 1:
@@ -208,13 +210,13 @@
 							$DownTime = $this->ReadPropertyFloat("DownTime");
 							if($this->ReadPropertyBoolean("TurnWithoutTravel"))$DownTime -= $this->ReadPropertyFloat("SlatTurnTime");
 							$this->SetValue("movetime", $DownTime);
-							$this->SetValue("slatangle", 100);
+							if($this->ReadPropertyFloat("SlatTurnTime") > 0)$this->SetValue("slatangle", 100);
 						    break;
 						case 112:
 							$this->SetValue("action", 0);
 							$this->SetValue("position", 0);
 							$this->SetValue("movetime", 0);
-							$this->SetValue("slatangle", 0);
+							if($this->ReadPropertyFloat("SlatTurnTime") > 0)$this->SetValue("slatangle", 0);
 						    break;
 						default:
 					}
@@ -222,8 +224,8 @@
                 default:
             }
 		}
-		
-        public function RequestAction($Ident, $Value) 
+
+        public function RequestAction($Ident, $Value)
 		{
             switch($Ident) {
                 case "action":
@@ -257,8 +259,8 @@
                     throw new Exception("Invalid Ident");
             }
         }
-		
-        public function Learn() 
+
+        public function Learn()
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
@@ -268,22 +270,22 @@
 			$data->DataByte0 = 128;
 			$this->SendData(json_encode($data));
         }
-		
-        public function ShutterCalibrate() 
+
+        public function ShutterCalibrate()
 		{
 			$this->SetBuffer("Calibrate", "true");
 			$this->ShutterStop();
         }
-		
-        public function ShutterStop() 
+
+        public function ShutterStop()
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
 			$data->DataByte0 = 8;
 			$this->SendData(json_encode($data));
         }
-		
-        public function ShutterMoveDown() 
+
+        public function ShutterMoveDown()
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
@@ -291,8 +293,8 @@
 			$data->DataByte0 = 10;
 			$this->SendData(json_encode($data));
         }
-		
-        public function ShutterMoveUp() 
+
+        public function ShutterMoveUp()
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
@@ -300,8 +302,8 @@
 			$data->DataByte0 = 10;
 			$this->SendData(json_encode($data));
         }
-		
-        public function ShutterMoveDownEx(float $movetime) 
+
+        public function ShutterMoveDownEx(float $movetime)
 		{
 			$movetime *= 10;
 			$data = json_decode($this->ReadPropertyString("BaseData"));
@@ -314,8 +316,8 @@
 			$this->SendData(json_encode($data));
 			return;
         }
-		
-        public function ShutterMoveUpEx(float $movetime) 
+
+        public function ShutterMoveUpEx(float $movetime)
 		{
 			$movetime *= 10;
 			$data = json_decode($this->ReadPropertyString("BaseData"));
@@ -328,18 +330,18 @@
 			$this->SendData(json_encode($data));
 			return;
         }
-		
-        public function ShutterStepUp() 
+
+        public function ShutterStepUp()
 		{
 			$this->ShutterMoveUpEx($this->ReadPropertyFloat("StepTime"));
         }
-		
-        public function ShutterStepDown() 
+
+        public function ShutterStepDown()
 		{
 			$this->ShutterMoveDownEx($this->ReadPropertyFloat("StepTime"));
         }
-		
-        public function ShutterMoveTo(int $position) 
+
+        public function ShutterMoveTo(int $position)
 		{
 #			Sicherstellen, dass der Aktor aktuell nicht fährt
 			if($this->GetValue("action")<>0) $this->ShutterStop();
@@ -387,19 +389,20 @@
 				return;
 			}
         }
-		
-        public function SetSlatAngle(int $angle) 
+
+        public function SetSlatAngle(int $angle)
 		{
 
 #			Abbrechen, wenn Wendedauer nicht gesetzt
 			if($this->ReadPropertyFloat("SlatTurnTime") == 0)return;
+			$Wait = (int)(($this->ReadPropertyFloat("UpTime") + 5)*10);
 
 #			Sicherstellen, dass der Aktor aktuell nicht fährt
-			if($this->GetValue("action")<>0) $this->ShutterStop();
-			for($i=0; $i<200; $i++){
+#			if($this->GetValue("action")<>0) $this->ShutterStop();
+			for($i=0; $i<$Wait; $i++){
 				if($this->GetValue("action")==0){
 					$dt = time() - IPS_GetVariable($this->GetIDForIdent("action"))['VariableChanged'];
-					if($dt > 4) break;
+					if($dt > 3) break;
 				}
 				IPS_Sleep(100);
 			}
@@ -430,7 +433,7 @@
 		{
 			$this->SendDataToParent($data);
 			$this->SendDebug("Send", $data, 0);
-		} 
+		}
 
 		protected function SendDebug($Message, $Data, $Format)
 		{
@@ -452,6 +455,5 @@
 			{
 			    parent::SendDebug($Message, $Data, $Format);
 			}
-		} 
+		}
 	}
-

@@ -121,7 +121,10 @@
 		<td>V3.03</td>
 		<td>Neu: Eltako Shutter - Lamellenverstellung ohne Verfahrweg</td>
 	  </tr>
+      <tr>
+		<td>V3.04</td>
+		<td>Fix: Ident slatangle wurde nicht gefunden</td>
+	  </tr>
 	</table>
   </body>
 </html>
-

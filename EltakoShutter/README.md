@@ -21,16 +21,16 @@
 		<li>Kalibrierung starten</li>
 		<li>Sobald der Rollladen vollständig geschlossen ist, <b><i>KALIBRIEREN</i></b> drücken. Je exakter Sie den Zeitpunkt treffen, um so exakter ist die Kalibrierung</li>
 	</ol>
-	Durch den Vorgang wird der Wert von <b><i>Fahrzeit Schließen (0-100%)</i></b> überschrieben. Zu Feinkalibrierung können Sie den Wert in der Modulansicht händisch anpassen.<br><br>	
+	Durch den Vorgang wird der Wert von <b><i>Fahrzeit Schließen (0-100%)</i></b> überschrieben. Zu Feinkalibrierung können Sie den Wert in der Modulansicht händisch anpassen.<br><br>
 	<b><i>Fahrzeit Öffnen (100-0%)</i></b>
 	<ol>
 		<li>Rolladen <b>vollständig</b> schließen</li>
 		<li>Kalibrierung starten</li>
 		<li>Sobald der Rollladen vollständig geöffnet ist, <b><i>KALIBRIEREN</i></b> drücken. Je exakter Sie den Zeitpunkt treffen, um so exakter ist die Kalibrierung</li>
 	</ol>
-	Durch den Vorgang wird der Wert von <b><i>Fahrzeit Öffnen (100-0%)</i></b> überschrieben. Zu Feinkalibrierung können Sie den Wert in der Modulansicht händisch anpassen.<br><br>	
+	Durch den Vorgang wird der Wert von <b><i>Fahrzeit Öffnen (100-0%)</i></b> überschrieben. Zu Feinkalibrierung können Sie den Wert in der Modulansicht händisch anpassen.<br><br>
 	<b><i>Wickelfaktor</i></b><br><br>
-	Der Wickelfaktor berücksichtigt die Tatsache, dass die Rolle des Rollladens beim Aufrollen größer wird. Dadurch steigt die Geschwindigkeit des Öffnungsvorgangs. 
+	Der Wickelfaktor berücksichtigt die Tatsache, dass die Rolle des Rollladens beim Aufrollen größer wird. Dadurch steigt die Geschwindigkeit des Öffnungsvorgangs.
 	Je größer der Wickelfaktor desto größer der Effekt.<br>
 	Bei Raffstoren gibt es diesen Effekt nicht. Hier ist beim  <i>Wickelfaktor</i> der Wert 1 einzutragen.<br>
 	<ol>
@@ -147,11 +147,14 @@
 		<td>V3.02</td>
 		<td>Neu: Anfahren von Lamellenwinkeln</td>
 	  </tr>
-	  <tr>
+      <tr>
 		<td>V3.03</td>
 		<td>Neu: Option Lamellenverstellung ohne Verfahrweg</td>
+	  </tr>
+      <tr>
+		<td>V3.04</td>
+		<td>Fix: Ident slatangle wurde nicht gefunden</td>
 	  </tr>
 	</table>
   </body>
 </html>
-
