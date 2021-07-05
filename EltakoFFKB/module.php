@@ -55,7 +55,7 @@
 					$this->SetValue('EnergyStorage', (int)$data->DataByte3 * 0.02);
 	                break;
 	            case "213":
-					switch($data->DataByte3) {
+					switch($data->DataByte0) {
 						case 9:
 							$this->SetValue('Contact', true);
 							break;
