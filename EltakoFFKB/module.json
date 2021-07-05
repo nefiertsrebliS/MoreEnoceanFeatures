@@ -1,0 +1,15 @@
+{
+	"id": "{D4FC9D38-F7C7-8486-C940-AE5705A60E33}",
+	"name": "mEnOceanF Eltako FFKB",
+	"type": 3,
+	"vendor": "More Enocean Features",
+	"aliases": 
+	[
+		"Eltako FTKB-rw",
+		"Eltako FFKB"
+	],
+	"parentRequirements": ["{70E3075F-A35D-4DEB-AC20-C929A156FE48}"],
+	"childRequirements": [],
+	"implemented": ["{DE2DA2C0-7A28-4D23-A9AA-6D1C7609C7EC}"],
+	"prefix": "MEF"
+}

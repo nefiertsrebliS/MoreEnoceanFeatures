@@ -1,0 +1,10 @@
+{
+	"translations": {
+		"de": { 
+			"DeviceID": "Geräte-ID",
+			"Battery Voltage": "Batteriespannung",
+			"Energy Storage": "Energiespeicher",
+			"Contact": "Kontakt"
+		}
+	}
+}

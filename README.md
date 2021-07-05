@@ -10,7 +10,7 @@
 	<h2>Grundsätzliches</h2>
 	Die Module haben denselben Funktionsumfang, wie die Grundmodule von Symcon.
 	Der Befehlsaufruf ändert sich allerdings. Der Prefix <b><i>ENO</i></b> wird durch den Prefix <b><i>MEF</i></b> ersetzt. Der Rest des Aufrufs bleibt inklusiver der zu übergebenden Parameter identisch.
-	<h2>EltakoShutter</h2>
+	<h2>Eltako Shutter</h2>
 	Das Modul wurde für den <b>FSB14</b> entwickelt, sollte aber auch für den <b>FSB61</b> und den <b>FSB71</b> einsetzbar sein.<br>
 	Das Modul kann zum exakten Anfahren einer bestimmten Rollladenposition konfiguriert werden.
 	<h2>EEP D2-05-00</h2>
@@ -29,6 +29,8 @@
 		<li>Kalibrierwerte setzen</li>
 	</ol>
 	Die Winkelverstellung von Jalousien wird noch nicht unterstützt.
+	<h2>Eltako FFKB/FTKB-rw</h2>
+	Das Modul unterstützt neben dem Profil <b>EEP D5-00-01</b> den Status der Batterie und des Energiespeichers.<br>
 	<h2>Changelog</h2>
 	<table>
 	  <tr>
@@ -124,6 +126,10 @@
       <tr>
 		<td>V3.04</td>
 		<td>Fix: Ident slatangle wurde nicht gefunden</td>
+	  </tr>
+      <tr>
+		<td>V3.05</td>
+		<td>Neu: Eltako FFKB und FTKB-rw</td>
 	  </tr>
 	</table>
   </body>

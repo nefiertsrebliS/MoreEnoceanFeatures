@@ -144,7 +144,7 @@
 						case 1:
 #							Lamellenwinkel bei Jalousien ermitteln
 							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
-								$newAngle = $oldAngle - $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100;
+								$newAngle = round($oldAngle - $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100);
 								$this->SetValue("slatangle", ($newAngle < 0)?0:$newAngle);
 
 #								Lamellenwinkel und Verfahren getrennt?
@@ -165,7 +165,7 @@
 						case 2:
 #							Lamellenwinkel bei Jalousien ermitteln
 							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
-								$newAngle = $oldAngle + $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100;
+								$newAngle = round($oldAngle + $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100);
 								$this->SetValue("slatangle", ($newAngle > 100)?100:$newAngle);
 
 #								Lamellenwinkel und Verfahren getrennt?
