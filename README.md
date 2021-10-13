@@ -31,6 +31,8 @@
 	Die Winkelverstellung von Jalousien wird noch nicht unterstützt.
 	<h2>Eltako FFKB/FTKB-rw</h2>
 	Das Modul unterstützt neben dem Profil <b>EEP D5-00-01</b> den Status der Batterie und des Energiespeichers.<br>
+	<h2>Enocean Button Emulator</h2>
+	Das Modul emuliert Enocean-Taster und sendet ESP2-Tastersignale, die in kompatible Geräte eingelernt werden können.<br>
 	<h2>Changelog</h2>
 	<table>
 	  <tr>
@@ -130,6 +132,10 @@
       <tr>
 		<td>V3.05</td>
 		<td>Neu: Eltako FFKB und FTKB-rw</td>
+	  </tr>
+      <tr>
+		<td>V3.06</td>
+		<td>Neu: Enocean Button Emulator</td>
 	  </tr>
 	</table>
   </body>

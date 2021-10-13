@@ -1,0 +1,9 @@
+{
+	"elements":
+	[
+		{ "name": "SendID", "type": "ValidationTextBox", "caption": "SendID:" }
+	],
+    "actions":
+    [
+    ]
+}
