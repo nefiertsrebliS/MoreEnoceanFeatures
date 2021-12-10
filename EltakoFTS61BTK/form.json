@@ -1,0 +1,40 @@
+{
+	"elements":
+	[
+		{"name": "ReturnID", "type": "ValidationTextBox", "caption": "ReturnID" },
+		{"name": "AdressTyp", "type": "CheckBox", "caption": "different Addresses" },
+		{"name": "LongPressDetectionTime", "type": "NumberSpinner", "caption": "LongPress Detection Time", "suffix": " ms"},
+		{"name": "IndicatorLight", "type": "CheckBox", "caption": "Pushbutton with Indicator Light" },
+        {"type": "ExpansionPanel", "name": "LedTL", "caption": "LED top left", "visible": false, "items": [
+			{ "name": "LedIDTL", "type": "ValidationTextBox", "caption": "SendID" },
+			{ "name": "StatusIDTL", "type": "SelectVariable", "caption": "StatusID" },
+			{"name": "DirectLedSTL", "type": "CheckBox", "caption": "Indication immediately after pressing Button" },
+			{"name": "DirectLedLTL", "type": "CheckBox", "caption": "Indication immediately when the button is held" },
+			{"name": "DirectLedDTL", "type": "CheckBox", "caption": "Indication immediately after double pressing Button" }
+		]},
+        {"type": "ExpansionPanel", "name": "LedTR", "caption": "LED top right", "visible": false, "items": [
+			{ "name": "LedIDTR", "type": "ValidationTextBox", "caption": "SendID" },
+			{ "name": "StatusIDTR", "type": "SelectVariable", "caption": "StatusID" },
+			{"name": "DirectLedSTR", "type": "CheckBox", "caption": "Indication immediately after pressing Button" },
+			{"name": "DirectLedLTR", "type": "CheckBox", "caption": "Indication immediately when the button is held" },
+			{"name": "DirectLedDTR", "type": "CheckBox", "caption": "Indication immediately after double pressing Button" }
+		]},
+        {"type": "ExpansionPanel", "name": "LedBL", "caption": "LED bottom left", "visible": false, "items": [
+			{ "name": "LedIDBL", "type": "ValidationTextBox", "caption": "SendID" },
+			{ "name": "StatusIDBL", "type": "SelectVariable", "caption": "StatusID" },
+			{"name": "DirectLedSBL", "type": "CheckBox", "caption": "Indication immediately after pressing Button" },
+			{"name": "DirectLedLBL", "type": "CheckBox", "caption": "Indication immediately when the button is held" },
+			{"name": "DirectLedDBL", "type": "CheckBox", "caption": "Indication immediately after double pressing Button" }
+		]},
+        {"type": "ExpansionPanel", "name": "LedBR", "caption": "LED bottom right", "visible": false, "items": [
+			{ "name": "LedIDBR", "type": "ValidationTextBox", "caption": "SendID" },
+			{ "name": "StatusIDBR", "type": "SelectVariable", "caption": "StatusID" },
+			{"name": "DirectLedSBR", "type": "CheckBox", "caption": "Indication immediately after pressing Button" },
+			{"name": "DirectLedLBR", "type": "CheckBox", "caption": "Indication immediately when the button is held" },
+			{"name": "DirectLedDBR", "type": "CheckBox", "caption": "Indication immediately after double pressing Button" }
+		]}
+	],
+    "actions":
+    [
+    ]
+}

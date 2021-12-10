@@ -9,30 +9,8 @@
 	<h1>Enocean Module mit erweitertem Funktionsumfang</h1>
 	<h2>Grundsätzliches</h2>
 	Die Module haben denselben Funktionsumfang, wie die Grundmodule von Symcon.
-	Der Befehlsaufruf ändert sich allerdings. Der Prefix <b><i>ENO</i></b> wird durch den Prefix <b><i>MEF</i></b> ersetzt. Der Rest des Aufrufs bleibt inklusiver der zu übergebenden Parameter identisch.
-	<h2>Eltako Shutter</h2>
-	Das Modul wurde für den <b>FSB14</b> entwickelt, sollte aber auch für den <b>FSB61</b> und den <b>FSB71</b> einsetzbar sein.<br>
-	Das Modul kann zum exakten Anfahren einer bestimmten Rollladenposition konfiguriert werden.
-	<h2>EEP D2-05-00</h2>
-	Das Modul wurde für den <b>NodOn SIN-2-RS-01 Shutter</b> entwickelt, ist aber auch mit allen weiteren <b>EEP D2-05-00 kompartiblen Shutter-Modulen</b> einsetzbar.<br>
-	Das Modul unterstützt folgende Funktionen:
-	<ol>
-		<li>Rolladenposition prozentgenau anfahren</li>
-		<li>Kalibrier- und Alarmwerte setzen</li>
-	</ol>
-	Die Winkelverstellung von Jalousien wird noch nicht unterstützt.
-	<h2>EEP A5-38-08 Blinds</h2>
-	Das Modul wurde für <b>EEP A5-38-08 kompartible Shutter-Module</b> entwickelt.<br>
-	Das Modul unterstützt folgende Funktionen:
-	<ol>
-		<li>Rolladenposition prozentgenau anfahren</li>
-		<li>Kalibrierwerte setzen</li>
-	</ol>
-	Die Winkelverstellung von Jalousien wird noch nicht unterstützt.
-	<h2>Eltako FFKB/FTKB-rw</h2>
-	Das Modul unterstützt neben dem Profil <b>EEP D5-00-01</b> den Status der Batterie und des Energiespeichers.<br>
-	<h2>Enocean Button Emulator</h2>
-	Das Modul emuliert Enocean-Taster und sendet ESP2-Tastersignale, die in kompatible Geräte eingelernt werden können.<br>
+	Der Befehlsaufruf ändert sich allerdings. Der Prefix <b><i>ENO</i></b> wird durch den Prefix <b><i>MEF</i></b> ersetzt. Der Rest des Aufrufs bleibt inklusiver der zu übergebenden Parameter identisch.<br>
+	Die Beschreibung der einzelnen Module sind in der README.md der Module zu finden.
 	<h2>Changelog</h2>
 	<table>
 	  <tr>
@@ -136,6 +114,10 @@
       <tr>
 		<td>V3.06</td>
 		<td>Neu: Enocean Button Emulator</td>
+	  </tr>
+      <tr>
+		<td>V3.07</td>
+		<td>Neu: Eltako BUS-Taster</td>
 	  </tr>
 	</table>
   </body>

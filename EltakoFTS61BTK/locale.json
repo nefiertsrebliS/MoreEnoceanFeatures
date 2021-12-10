@@ -1,0 +1,30 @@
+{
+	"translations": {
+		"de": { 
+			"Base Configuration": "Basiskonfiguration",
+			"ReturnID": "Geräte-ID",
+			"different Addresses": "unterschiedliche Adressen",
+			"LongPress Detection Time":"Auswertedauer für gehaltene Taste",
+			"Pushbutton with Indicator Light":"Taster mit Kontrollleuchte",
+			"Button": "Taste",
+			"Longpress": "gehalten",
+			"top": "oben",
+			"bottom": "unten",
+			"left": "links",
+			"right": "rechts",
+			"released": "losgelassen",
+			"short pressed": "kurz gedrückt",
+			"double clicked": "doppelt gedrückt",
+			"long pressed": "lange gedrückt",
+			"Indication immediately after pressing Button": "Status direkt nach Tastendruck",
+			"Indication immediately when the button is held": "Status sofort bei gehaltener Taste",
+			"Indication immediately after double pressing Button": "Status direkt nach doppeltem Tastendruck",
+			"LED top left": "LED oben links",
+			"LED top right": "LED oben rechts",
+			"LED bottom left": "LED unten links",
+			"LED bottom right": "LED unten rechts",
+			"SendID": "SendeID",
+			"StatusID": "StatusID"
+		}
+	}
+}

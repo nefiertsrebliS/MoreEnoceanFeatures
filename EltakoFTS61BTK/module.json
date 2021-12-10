@@ -1,13 +1,13 @@
 {
-	"id": "{AEDED946-18A0-453D-9470-555E2D23736D}",
-	"name": "EltakoShutter",
+	"id": "{6062BC9C-9A91-0E66-09BD-B0CF5B3B8E35}",
+	"name": "EltakoFTS61BTK",
 	"type": 3,
 	"vendor": "Eltako",
 	"aliases": 
 	[
-		"Eltako FSB14",
-		"Eltako FSB61",
-		"Eltako FSB71"
+		"Eltako FTS61BTK",
+		"Eltako B4T65",
+		"Eltako B4FT65"
 	],
 	"parentRequirements": ["{70E3075F-A35D-4DEB-AC20-C929A156FE48}"],
 	"childRequirements": [],
