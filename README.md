@@ -119,6 +119,10 @@
 		<td>V3.07</td>
 		<td>Neu: Eltako BUS-Taster</td>
 	  </tr>
+      <tr>
+		<td>V3.08</td>
+		<td>Neu: Eltako FTS14EM</td>
+	  </tr>
 	</table>
   </body>
 </html>

@@ -1,0 +1,16 @@
+{
+	"translations": {
+		"de": { 
+			"ReturnID": "Geräte-ID",
+			"Pushbutton type": "Typ des Tasters",
+			"Universal Pushbutton": "Universaltaster",
+			"Directional Pushbutton": "Richtungstaster",
+			"LongPress Detection Time":"Auswertedauer für gehaltene Taste",
+			"Button": "Taste",
+			"released": "losgelassen",
+			"short pressed": "kurz gedrückt",
+			"double clicked": "doppelt gedrückt",
+			"long pressed": "lange gedrückt"
+		}
+	}
+}

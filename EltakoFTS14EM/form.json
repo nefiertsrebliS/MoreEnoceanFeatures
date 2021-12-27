@@ -1,0 +1,15 @@
+{
+	"elements":
+	[
+		{"name": "ReturnID", "type": "ValidationTextBox", "caption": "ReturnID" },
+		{"name": "ButtonType", "type": "Select", "caption": "Pushbutton type",
+			"options": [
+				{ "caption": "Universal Pushbutton", "value": false },
+				{ "caption": "Directional Pushbutton", "value": true }
+			]
+		}
+	],
+    "actions":
+    [
+    ]
+}

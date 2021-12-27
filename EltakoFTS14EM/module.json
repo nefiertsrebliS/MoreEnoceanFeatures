@@ -1,0 +1,14 @@
+{
+	"id": "{C2CE564F-B5B2-B94A-7ACF-1DB07A2CEEE7}",
+	"name": "EltakoFTS14EM",
+	"type": 3,
+	"vendor": "Eltako",
+	"aliases": 
+	[
+		"Eltako FTS14EM"
+	],
+	"parentRequirements": ["{70E3075F-A35D-4DEB-AC20-C929A156FE48}"],
+	"childRequirements": [],
+	"implemented": ["{DE2DA2C0-7A28-4D23-A9AA-6D1C7609C7EC}"],
+	"prefix": "MEF"
+}
