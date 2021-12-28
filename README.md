@@ -123,6 +123,10 @@
 		<td>V3.08</td>
 		<td>Neu: Eltako FTS14EM</td>
 	  </tr>
+      <tr>
+		<td>V3.09</td>
+		<td>Fix: LongPressDetectionTime</td>
+	  </tr>
 	</table>
   </body>
 </html>

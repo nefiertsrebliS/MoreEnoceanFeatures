@@ -7,7 +7,8 @@
 				{ "caption": "Universal Pushbutton", "value": false },
 				{ "caption": "Directional Pushbutton", "value": true }
 			]
-		}
+		},
+		{"name": "LongPressDetectionTime", "type": "NumberSpinner", "caption": "LongPress Detection Time", "suffix": " ms"}
 	],
     "actions":
     [
