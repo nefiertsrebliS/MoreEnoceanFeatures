@@ -127,6 +127,11 @@
 		<td>V3.09</td>
 		<td>Fix: LongPressDetectionTime</td>
 	  </tr>
+	  <tr>
+		<td>V3.10</td>
+		<td>Fix: Filterproblem bei 64-bit Windows-Systemen</td>
+		<td>Neu: Button-Emulator funktioniert unabhängig von der Enocean-Hardware</td>
+	  </tr>
 	</table>
   </body>
 </html>

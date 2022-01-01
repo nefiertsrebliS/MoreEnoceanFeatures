@@ -1,7 +1,7 @@
 {
 	"elements":
 	[
-		{ "name": "SendID", "type": "ValidationTextBox", "caption": "SendID:" }
+		{ "name": "DeviceID", "type": "NumberSpinner", "caption": "DeviceID" }
 	],
     "actions":
     [

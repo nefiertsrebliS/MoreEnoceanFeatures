@@ -1,6 +1,27 @@
 <?php
 	class EnoceanButtonEmulator extends IPSModule
 	{
+		private const BaseData      = '{
+			"DataID":"{70E3075F-A35D-4DEB-AC20-C929A156FE48}",
+			"Device":246, 
+			"Status":0,
+			"DeviceID":0,
+			"DestinationID":-1,
+			"DataLength":4,
+			"DataByte12":0,
+			"DataByte11":0,
+			"DataByte10":0,
+			"DataByte9":0,
+			"DataByte8":0,
+			"DataByte7":0,
+			"DataByte6":0,
+			"DataByte5":0,
+			"DataByte4":0,
+			"DataByte3":7,
+			"DataByte2":0,
+			"DataByte1":0,
+			"DataByte0":0
+		}';
 
 #================================================================================================
 		public function Create() 
@@ -9,7 +30,7 @@
 			//Never delete this line!
 			parent::Create();
 
-			$this->RegisterPropertyString('SendID', '00000000');
+			$this->RegisterPropertyInteger('DeviceID', 0);
 		
 			//Connect to available enocean gateway
 			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
@@ -35,14 +56,14 @@
 		public function PressUp()
 #================================================================================================
 		{
-			$this->SendState(70);
+			$this->SendState(112);
 		}
 
 #================================================================================================
 		public function ShortPressUp()
 #================================================================================================
 		{
-			$this->SendState(70);
+			$this->SendState(112);
 			IPS_Sleep(150);
 			$this->SendState(0);
 		}
@@ -51,14 +72,14 @@
 		public function PressDown()
 #================================================================================================
 		{
-			$this->SendState(50);
+			$this->SendState(80);
 		}
 
 #================================================================================================
 		public function ShortPressDown()
 #================================================================================================
 		{
-			$this->SendState(50);
+			$this->SendState(80);
 			IPS_Sleep(150);
 			$this->SendState(0);
 		}
@@ -70,34 +91,22 @@
 			$this->SendState(0);
 		}
 
+#================================================================================================
 		protected function SendState(int $State)
+#================================================================================================
 		{
-			$SendID   = $this->ReadPropertyString("SendID");
-			$this->SendDebug("Send to ".$SendID, $State, 0);
-			$Device = str_split($SendID, 2);
-			$string = "0B 05 00 00 00 00 00 00 00 00 30";
-			$array = explode(" ", $string);
-			$array[2] = $State;
-		    $array[6] = $Device[0];
-		    $array[7] = $Device[1];
-		    $array[8] = $Device[2];
-		    $array[9] = $Device[3];
-			
-			$checksumcalc = 0;
-			$SendText = chr(hexdec("A5")).chr(hexdec("5A"));
-			foreach($array as $hex){
-				$checksumcalc += hexdec($hex);
-				$SendText .= chr(hexdec($hex));
-			}
-			$checksumcalc = sprintf("%04X",$checksumcalc);
-			$SendText .= chr(hexdec(str_split($checksumcalc, 2)[1]));
+			$data = json_decode(self::BaseData);
 
-			$Port = IPS_GetInstance(IPS_GetInstance($this->InstanceID)['ConnectionID'])['ConnectionID'];
-			SPRT_SendText( $Port, $SendText );
-			return;
+			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
+			$data->DataByte0 = $State;
+
+			$this->SendDataToParent(json_encode($data));
+			$this->SendDebug("Transmit", $State, 0);
 		}
 
+#================================================================================================
 		protected function SendDebug($Message, $Data, $Format)
+#================================================================================================
 		{
 			if (is_array($Data))
 			{
@@ -119,4 +128,3 @@
 			}
 		} 
 	}
-?>

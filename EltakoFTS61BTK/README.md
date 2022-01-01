@@ -22,9 +22,10 @@ Die Instanz wertet Signale von Enocean-Tastern nach kurzem, langem Tastendruck u
 
 ## Changelog
 
-| Version | Changes								|
-| --------|-------------------------------------|
-| V3.07   | Basisversion						|
+| Version | Changes								            |
+| --------|-------------------------------------------------|
+| V3.07   | Basisversion						            |
+| V3.10   | FIX: Filterproblem bei 64-bit Windows-Systemen	|
 
 ## License
 

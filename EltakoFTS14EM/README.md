@@ -10,10 +10,11 @@ Die Instanz wertet Signale des Eingabemoduls FTS14EM nach kurzem, langem Tastend
 
 ## Changelog
 
-| Version | Changes								|
-| --------|-------------------------------------|
-| V3.08   | Basisversion						|
-| V3.09   | Fix: LongPressDetectionTime			|
+| Version | Changes								            |
+| --------|-------------------------------------------------|
+| V3.08   | Basisversion					            	|
+| V3.09   | Fix: LongPressDetectionTime			            |
+| V3.10   | Fix: Filterproblem bei 64-bit Windows-Systemen  |
 
 ## License
 

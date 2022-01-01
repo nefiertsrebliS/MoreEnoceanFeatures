@@ -53,6 +53,7 @@ class EltakoFTS14EM extends IPSModule
 
 		#	Filter setzen
 		$BaseID = (int)hexdec($this->ReadPropertyString('ReturnID'));
+		if($BaseID & 0x80000000)$BaseID -=  0x100000000;
 		if($this->ReadPropertyBoolean('ButtonType')){
 			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s),.*', $BaseID+1, $BaseID+3, $BaseID+5, $BaseID+7, $BaseID+9);
 		}else{

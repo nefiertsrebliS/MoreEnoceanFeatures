@@ -63,6 +63,7 @@ class EltakoFTS61BTK extends IPSModule
 
 		#	Filter setzen
 		$BaseID = (int)hexdec($this->ReadPropertyString('ReturnID'));
+		if($BaseID & 0x80000000)$BaseID -=  0x100000000;
 		if($this->ReadPropertyBoolean('AdressTyp')){
 			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s),.*', $BaseID, $BaseID+1, $BaseID+2, $BaseID+3);
 		}else{

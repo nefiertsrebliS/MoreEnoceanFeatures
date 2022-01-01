@@ -2,10 +2,10 @@
 	"id": "{D684B868-D858-E0F6-F21C-30B565727B0B}",
 	"name": "EnoceanButtonEmulator",
 	"type": 3,
-	"vendor": "Eltako",
+	"vendor": "Enocean",
 	"aliases": 
 	[
-		"Eltako-BUS Button Emulator"
+		"Enocean Button Emulator"
 	],
 	"parentRequirements": ["{70E3075F-A35D-4DEB-AC20-C929A156FE48}"],
 	"childRequirements": [],

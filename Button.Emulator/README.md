@@ -8,8 +8,6 @@
   <body>
 	<h1>Button-Emulator</h1>
 	Die Instanz emuliert einen Enocean-Taster. Der Taster kann in alle durch Taster steuerbaren Enocean-Geräte eingelernt werden. Der Tastendruck kann mittels der unten aufgeführten Befehle ausgelöst werden. 
-	<b>Voraussetzung: Eltako-BUS verbunden über ein FGW14 mit IP-Symcon.</b>
-	Es werden ESP2-kompatible Befehle gesendet.
 	<h2>Mögliche PHP-Befehle</h3>
 	<table>
 	  <tr>
@@ -43,6 +41,10 @@
 	  <tr>
 		<td>V3.05</td>
 		<td>Grundversion</td>
+	  </tr>
+	  <tr>
+		<td>V3.10</td>
+		<td>Neu: Funktioniert unabhängig von der Enocean-Hardware</td>
 	  </tr>
 	</table>
   </body>
