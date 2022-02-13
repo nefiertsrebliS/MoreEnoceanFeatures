@@ -1,8 +1,72 @@
 {
 	"elements":
 	[
-		{ "name": "DeviceID", "type": "NumberSpinner", "caption": "DeviceID" },
-		{ "name": "ReturnID", "type": "ValidationTextBox", "caption": "ReturnID" },
+		{	"type": "RowLayout", 
+			"items": [
+				{
+					"type": "NumberSpinner",
+					"name": "DeviceID",
+					"caption": "DeviceID"
+				},{
+					"type": "Button",
+					"caption": "Find free DeviceID",
+					"onClick": "IPS_RequestAction($id, \"FreeDeviceID\", \"\");"
+				}
+			]
+		},
+		{	"type": "RowLayout", 
+			"items": [
+				{
+					"type": "ValidationTextBox",
+					"name": "ReturnID",
+					"caption": "ReturnID"
+				},{
+					"type": "PopupButton",
+					"caption": "Find ReturnID",
+					"onClick": "IPS_RequestAction($id, \"Listen\", \"60\");",
+					"popup": {
+						"caption": "Find ReturnID",
+						"buttons": [
+							{
+								"caption": "apply",
+								"onClick": "$value = isset($FoundIDs['ReturnID'])?$FoundIDs['ReturnID']:\"00000000\"; IPS_RequestAction($id, \"SetReturnID\", \"$value\");"
+							}
+						],
+						"items": [
+							{
+								"type": "ProgressBar",
+								"name": "Remaining",
+								"minimum": 0,
+								"maximum": 60,
+								"current": 60,
+								"caption": "60 / 60s"
+							},{ 
+								"type": "Label", 
+								"caption": "please operate device", 
+								"bold": true
+							},{
+								"type": "List",
+								"name": "FoundIDs",
+								"add": false,
+								"columns": [
+									{
+										"caption": "ReturnID",
+										"name": "ReturnID",
+										"width": "auto"
+									},{
+										"caption": "InstanceID",
+										"name": "InstanceID",
+										"width": "20%"
+									}
+								],
+								"values": [
+								]
+							}							
+						]
+					}
+				}
+			]
+		},
 		{ "name": "DownTime", "type": "NumberSpinner", "caption": "Travel time down (0-100%) in sec", "digits": 1, "minimum": 1},
 		{ "name": "UpTime", "type": "NumberSpinner", "caption": "Travel time up (100-0%) in sec", "digits": 1, "minimum": 1 },
 		{ "name": "RollFactor", "type": "NumberSpinner", "caption": "Winding factor", "digits": 2, "minimum": 1 },

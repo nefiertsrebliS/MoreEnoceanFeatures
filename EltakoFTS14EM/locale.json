@@ -2,6 +2,10 @@
 	"translations": {
 		"de": { 
 			"ReturnID": "Geräte-ID",
+			"InstanceID": "InstanzID",
+			"Find ReturnID": "Suche Geräte-ID",
+			"apply": "übernehmen",
+			"please operate device": "Bitte Gerät bedienen",
 			"Pushbutton type": "Typ des Tasters",
 			"Universal Pushbutton": "Universaltaster",
 			"Directional Pushbutton": "Richtungstaster",

@@ -1,7 +1,19 @@
 {
 	"elements":
 	[
-		{ "name": "DeviceID", "type": "NumberSpinner", "caption": "DeviceID" }
+		{	"type": "RowLayout", 
+			"items": [
+				{
+					"type": "NumberSpinner",
+					"name": "DeviceID",
+					"caption": "DeviceID"
+				},{
+					"type": "Button",
+					"caption": "Find free DeviceID",
+					"onClick": "IPS_RequestAction($id, \"FreeDeviceID\", \"\");"
+				}
+			]
+		}
 	],
     "actions":
     [

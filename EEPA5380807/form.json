@@ -1,7 +1,59 @@
 {
 	"elements":
 	[
-		{ "name": "ReturnID", "type": "ValidationTextBox", "caption": "DeviceID" }
+		{	"type": "RowLayout", 
+			"items": [
+				{
+					"type": "ValidationTextBox",
+					"name": "ReturnID",
+					"caption": "DeviceID"
+				},{
+					"type": "PopupButton",
+					"caption": "Find ReturnID",
+					"onClick": "IPS_RequestAction($id, \"Listen\", \"60\");",
+					"popup": {
+						"caption": "Find ReturnID",
+						"buttons": [
+							{
+								"caption": "apply",
+								"onClick": "$value = isset($FoundIDs['ReturnID'])?$FoundIDs['ReturnID']:\"00000000\"; IPS_RequestAction($id, \"SetReturnID\", \"$value\");"
+							}
+						],
+						"items": [
+							{
+								"type": "ProgressBar",
+								"name": "Remaining",
+								"minimum": 0,
+								"maximum": 60,
+								"current": 60,
+								"caption": "60 / 60s"
+							},{ 
+								"type": "Label", 
+								"caption": "please operate device", 
+								"bold": true
+							},{
+								"type": "List",
+								"name": "FoundIDs",
+								"add": false,
+								"columns": [
+									{
+										"caption": "DeviceID",
+										"name": "ReturnID",
+										"width": "auto"
+									},{
+										"caption": "InstanceID",
+										"name": "InstanceID",
+										"width": "20%"
+									}
+								],
+								"values": [
+								]
+							}							
+						]
+					}
+				}
+			]
+		}
 	],
     "actions":
     [

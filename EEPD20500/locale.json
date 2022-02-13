@@ -1,15 +1,19 @@
 {
 	"translations": {
 		"de": { 
-			"DeviceID": "Ger‰te-ID",
-			"close": "schlieﬂen",
-			"close 35%": "35% schlieﬂen",
+			"DeviceID": "Ger√§te-ID",
+			"InstanceID": "InstanzID",
+			"Find ReturnID": "Suche Ger√§te-ID",
+			"apply": "√ºbernehmen",
+			"please operate device": "Bitte Ger√§t bedienen",
+			"close": "schlie√üen",
+			"close 35%": "35% schlie√üen",
 			"stop": "stop",
-			"open": "ˆffnen",
+			"open": "√∂ffnen",
 			"teachin": "einlernen",
 			"teachout": "ablernen",
-			"1. fill in the DeviceID above": "1. Tragen Sie die Ger‰te-ID oben ein",
-			"2. press TEACHIN/TEACHOUT after activating the learnmode on your device": "2. Dr¸cken Sie EINLERNEN/ABLERNEN, nachdem Sie das Ger‰t in den Lernmodus versetzt haben"
+			"1. fill in the DeviceID above": "1. Tragen Sie die Ger√§te-ID oben ein",
+			"2. press TEACHIN/TEACHOUT after activating the learnmode on your device": "2. Dr√ºcken Sie EINLERNEN/ABLERNEN, nachdem Sie das Ger√§t in den Lernmodus versetzt haben"
 		}
 	}
 }

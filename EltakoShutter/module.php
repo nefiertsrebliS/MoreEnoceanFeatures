@@ -1,7 +1,9 @@
 <?php
 	class EltakoShutter extends IPSModule
 	{
+		#================================================================================================
 		public function Create()
+		#================================================================================================
 		{
 			//Never delete this line!
 			parent::Create();
@@ -37,11 +39,14 @@
 				"DataByte0":0
 			}');
 
+			#	ListenTimer
+			$this->RegisterTimer('ListenTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Listen", -1);');
+			$this->SetBuffer('Listen', 0);
 
 			//Connect to available enocean gateway
 			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
 
-#			Fehlende Profile erzeugen
+			#	Fehlende Profile erzeugen
 			if (!IPS_VariableProfileExists('ShutterMoveStop.MEF')) {
 				IPS_CreateVariableProfile('ShutterMoveStop.MEF', 1);
 				IPS_SetVariableProfileIcon('ShutterMoveStop.MEF', 'Shutter');
@@ -64,13 +69,18 @@
 			}
 		}
 
-		public function Destroy(){
+		#================================================================================================
+		public function Destroy()
+		#================================================================================================
+		{
 		    //Never delete this line!
 		    parent::Destroy();
 
 		}
 
+		#================================================================================================
 		public function ApplyChanges()
+		#================================================================================================
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
@@ -91,20 +101,20 @@
 				$this->UpdateFormField("TurnWithoutTravel", "visible", false);
 			}
 
-#			Filter setzen
-			$ID = hexdec($this->ReadPropertyString("ReturnID"));
-			if($ID & 0x80000000)$ID -=  0x100000000;
-			$this->SendDebug("DeviceID", (int)$ID, 0);
-			$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)$ID.",.*");
+			#	Filter setzen
+			$this->SetFilter();
 		}
 
+		#================================================================================================
 		public function ReceiveData($JSONString)
+		#================================================================================================
 		{
 			$this->SendDebug("Receive", $JSONString, 0);
 			$data = json_decode($JSONString);
-#			$this->SendDebug("Kalibrierung", $JSONString, 0);
 
-#			Kalibrieren, wenn eingeleitet
+			if($this->GetReturnID($data, array(165, 246)))return;
+
+			#	Kalibrieren, wenn eingeleitet
 			if($this->GetBuffer("Calibrate")=="true"){
 				$this->SetBuffer("Calibrate", "false");
 
@@ -132,7 +142,7 @@
 
             switch($data->Device) {
 
-#				ShutterDevice liefert Richtung und Fahrzeit
+				#	ShutterDevice liefert Richtung und Fahrzeit
                 case "165":
 					$dt = ((int)$data->DataByte2 + (int)$data->DataByte3 * 255) / 10;
 					$DownTime = $this->ReadPropertyFloat("DownTime");
@@ -142,12 +152,12 @@
 
 					switch($data->DataByte1) {
 						case 1:
-#							Lamellenwinkel bei Jalousien ermitteln
+							#	Lamellenwinkel bei Jalousien ermitteln
 							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
 								$newAngle = round($oldAngle - $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100);
 								$this->SetValue("slatangle", ($newAngle < 0)?0:$newAngle);
 
-#								Lamellenwinkel und Verfahren getrennt?
+								#	Lamellenwinkel und Verfahren getrennt?
 								if($this->ReadPropertyBoolean("TurnWithoutTravel")){
 									$TurnTime = round(($oldAngle - $this->GetValue("slatangle")) * $this->ReadPropertyFloat("SlatTurnTime") / 100 ,1);
 									$dt = ($dt > $TurnTime)? $dt - $TurnTime : 0;
@@ -156,19 +166,19 @@
 								}
 							}
 
-#							neue Fahrzeit für 0 bis aktuelle Position ermitteln
+							#	neue Fahrzeit für 0 bis aktuelle Position ermitteln
 							$dt = $dt / $UpTime * $DownTime;
 							$newValue = $this->GetValue("movetime") - $dt;
 							if($newValue < 0)$newValue = 0;
 							$this->SetValue("movetime", $newValue);
 						    break;
 						case 2:
-#							Lamellenwinkel bei Jalousien ermitteln
+							#	Lamellenwinkel bei Jalousien ermitteln
 							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
 								$newAngle = round($oldAngle + $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100);
 								$this->SetValue("slatangle", ($newAngle > 100)?100:$newAngle);
 
-#								Lamellenwinkel und Verfahren getrennt?
+								#	Lamellenwinkel und Verfahren getrennt?
 								if($this->ReadPropertyBoolean("TurnWithoutTravel")){
 									$TurnTime = round(($this->GetValue("slatangle") - $oldAngle) * $this->ReadPropertyFloat("SlatTurnTime") / 100 ,1);
 									$dt = ($dt > $TurnTime)? $dt - $TurnTime : 0;
@@ -177,7 +187,7 @@
 								}
 							}
 
-#							neue Fahrzeit für 0 bis aktuelle Position ermitteln
+							#	neue Fahrzeit für 0 bis aktuelle Position ermitteln
 							$newValue = $this->GetValue("movetime") + $dt;
 							if($newValue > $DownTime)$newValue = $DownTime;
 							$this->SetValue("movetime", $newValue);
@@ -185,17 +195,17 @@
 						default:
 					}
 
-#					Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
+					#	Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
 					$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
 
-#					neue Position ermitteln
+					#	neue Position ermitteln
 					$newPosition = round($newValue / $DownTime * 100 * $Factor);
 					$this->SetValue("position", $newPosition);
 
 					$this->SetValue("action", 0);
                     break;
 
-#				SwitchDevice liefert Richtung und Endposition
+				#	SwitchDevice liefert Richtung und Endposition
                 case "246":
 					switch($data->DataByte0) {
 						case 1:
@@ -225,7 +235,9 @@
             }
 		}
 
+		#================================================================================================
         public function RequestAction($Ident, $Value)
+		#================================================================================================
 		{
             switch($Ident) {
                 case "action":
@@ -255,12 +267,23 @@
                 case "slatangle":
 					$this->SetSlatAngle($Value);
                     break;
+				case "FreeDeviceID":
+					$this->UpdateFormField('DeviceID', 'value', $this->FreeDeviceID());
+					break;
+				case "Listen":
+					$this->Listen($Value);
+					break;
+				case "SetReturnID":
+					$this->UpdateFormField('ReturnID', 'value', $Value);
+					break;
                 default:
                     throw new Exception("Invalid Ident");
             }
         }
 
+		#================================================================================================
         public function Learn()
+		#================================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
@@ -271,13 +294,17 @@
 			$this->SendData(json_encode($data));
         }
 
+		#================================================================================================
         public function ShutterCalibrate()
+		#================================================================================================
 		{
 			$this->SetBuffer("Calibrate", "true");
 			$this->ShutterStop();
         }
 
+		#================================================================================================
         public function ShutterStop()
+		#================================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
@@ -285,7 +312,9 @@
 			$this->SendData(json_encode($data));
         }
 
+		#================================================================================================
         public function ShutterMoveDown()
+		#================================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
@@ -294,7 +323,9 @@
 			$this->SendData(json_encode($data));
         }
 
+		#================================================================================================
         public function ShutterMoveUp()
+		#================================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
@@ -303,7 +334,9 @@
 			$this->SendData(json_encode($data));
         }
 
+		#================================================================================================
         public function ShutterMoveDownEx(float $movetime)
+		#================================================================================================
 		{
 			$movetime *= 10;
 			$data = json_decode($this->ReadPropertyString("BaseData"));
@@ -317,7 +350,9 @@
 			return;
         }
 
+		#================================================================================================
         public function ShutterMoveUpEx(float $movetime)
+		#================================================================================================
 		{
 			$movetime *= 10;
 			$data = json_decode($this->ReadPropertyString("BaseData"));
@@ -331,19 +366,25 @@
 			return;
         }
 
+		#================================================================================================
         public function ShutterStepUp()
+		#================================================================================================
 		{
 			$this->ShutterMoveUpEx($this->ReadPropertyFloat("StepTime"));
         }
 
+		#================================================================================================
         public function ShutterStepDown()
+		#================================================================================================
 		{
 			$this->ShutterMoveDownEx($this->ReadPropertyFloat("StepTime"));
         }
 
+		#================================================================================================
         public function ShutterMoveTo(int $position)
+		#================================================================================================
 		{
-#			Sicherstellen, dass der Aktor aktuell nicht fährt
+			#	Sicherstellen, dass der Aktor aktuell nicht fährt
 			if($this->GetValue("action")<>0) $this->ShutterStop();
 			for($i=0; $i<200; $i++){
 				if($this->GetValue("action")==0){
@@ -362,7 +403,7 @@
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
 
-#			Zeit für Zielposition holen
+			#	Zeit für Zielposition holen
 			$DownTime = $this->ReadPropertyFloat("DownTime");
 			$UpTime = $this->ReadPropertyFloat("UpTime");
 			$RollFactor = $this->ReadPropertyFloat("RollFactor");
@@ -374,10 +415,10 @@
 			}
 			$newTime = $i/100;
 
-#			Zeit für aktuelle Position holen
+			#	Zeit für aktuelle Position holen
 			$oldTime = $this->GetValue("movetime");
 
-#			Movetime und Direction bestimmen
+			#	Movetime und Direction bestimmen
 			$moveTime = $newTime - $oldTime;
 
 			if($moveTime > 0){
@@ -390,15 +431,16 @@
 			}
         }
 
+		#================================================================================================
         public function SetSlatAngle(int $angle)
+		#================================================================================================
 		{
 
-#			Abbrechen, wenn Wendedauer nicht gesetzt
+			#	Abbrechen, wenn Wendedauer nicht gesetzt
 			if($this->ReadPropertyFloat("SlatTurnTime") == 0)return;
 			$Wait = (int)(($this->ReadPropertyFloat("UpTime") + 5)*10);
 
-#			Sicherstellen, dass der Aktor aktuell nicht fährt
-#			if($this->GetValue("action")<>0) $this->ShutterStop();
+			#	Sicherstellen, dass der Aktor aktuell nicht fährt
 			for($i=0; $i<$Wait; $i++){
 				if($this->GetValue("action")==0){
 					$dt = time() - IPS_GetVariable($this->GetIDForIdent("action"))['VariableChanged'];
@@ -429,13 +471,17 @@
 			}
         }
 
+		#================================================================================================
 		protected function SendData($data)
+		#================================================================================================
 		{
 			$this->SendDataToParent($data);
 			$this->SendDebug("Send", $data, 0);
 		}
 
+		#================================================================================================
 		protected function SendDebug($Message, $Data, $Format)
+		#================================================================================================
 		{
 			if (is_array($Data))
 			{
@@ -455,5 +501,101 @@
 			{
 			    parent::SendDebug($Message, $Data, $Format);
 			}
+		}
+
+		#================================================================================================
+		protected function FreeDeviceID()
+		#================================================================================================
+		{
+			$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
+			if($Gateway == 0) return;
+			$Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
+			$DeviceArray = array();
+			foreach ($Devices as $Device){
+				if(IPS_GetInstance($Device)["ConnectionID"] == $Gateway){
+					$config = json_decode(IPS_GetConfiguration($Device));
+					if(!property_exists($config, 'DeviceID'))continue;
+					if(is_integer($config->DeviceID)) $DeviceArray[] = $config->DeviceID;
+				}
+			}
+		
+			for($ID = 1; $ID<=256; $ID++)if(!in_array($ID,$DeviceArray))break;
+			return $ID == 256?0:$ID;
+		}
+		
+		#=====================================================================================
+		private function Listen($value) 
+		#=====================================================================================
+		{
+			$this->SetReceiveDataFilter('');
+			if($value > 0){
+				$this->SetBuffer('DeviceIDs','[]');
+				$this->UpdateFormField('FoundIDs', 'values', json_encode(array()));
+			}
+			$this->SetTimerInterval('ListenTimer', 1000);
+			$remain = intval($this->GetBuffer('Listen')) + $value;
+			if($remain == 0)$this->SetFilter();
+			if($remain > 60) $remain = 60;
+			$this->UpdateFormField('Remaining', 'current', $remain);
+			$this->UpdateFormField('Remaining', 'caption', "$remain / 60s");
+			$this->SetBuffer('Listen', $remain);
+		}
+		
+		#=====================================================================================
+		private function GetReturnID($data, $DataValues) 
+		#=====================================================================================
+		{
+			if($this->GetTimerInterval('ListenTimer') == 0) return false;
+
+			$values = json_decode($this->GetBuffer('DeviceIDs'));
+			$Devices = $this->GetDeviceArray();
+			if(in_array($data->Device, $DataValues)){
+				$ID = $data->DeviceID;
+				if($ID <= 0)return true;
+				$DeviceID = sprintf('%08X',$ID);
+				if(strpos($this->GetBuffer('DeviceIDs'), $DeviceID) === false){
+					$values[] = array(
+						"ReturnID" => $DeviceID, 
+						"InstanceID" => isset($Devices[$DeviceID])?$Devices[$DeviceID]:0 ,
+						"rowColor"=>isset($Devices[$DeviceID])?"#C0FFC0":-1
+					);
+					$this->UpdateFormField('FoundIDs', 'values', json_encode($values));
+					$this->SetBuffer('DeviceIDs', json_encode($values));
+				}
+			}
+			return true;
+		}
+
+		#=====================================================================================
+		private function GetDeviceArray()
+		#=====================================================================================
+		{
+			$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
+			if($Gateway == 0) return;
+			$Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
+			$DeviceArray = array();
+			foreach ($Devices as $Device){
+				if(IPS_GetInstance($Device)["ConnectionID"] == $Gateway){
+					$config = json_decode(IPS_GetConfiguration($Device));
+					if(!property_exists($config, 'ReturnID'))continue;
+					$DeviceArray[strtoupper(trim($config->ReturnID))] = $Device;
+				}
+			}
+			return $DeviceArray;
+		}
+
+		#=====================================================================================
+		private function SetFilter() 
+		#=====================================================================================
+		{
+			#	ListenTimer ausschalten
+			$this->SetTimerInterval('ListenTimer', 0);
+
+			#	Filter setzen
+			$ID = hexdec($this->ReadPropertyString("ReturnID"));
+			if($ID & 0x80000000)$ID -=  0x100000000;
+			$filter = sprintf('.*\"DeviceID\":%s,.*', (int)$ID);
+			$this->SendDebug('Filter', $filter, 0);
+			$this->SetReceiveDataFilter($filter);
 		}
 	}

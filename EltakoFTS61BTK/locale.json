@@ -3,6 +3,10 @@
 		"de": { 
 			"Base Configuration": "Basiskonfiguration",
 			"ReturnID": "Geräte-ID",
+			"InstanceID": "InstanzID",
+			"Find ReturnID": "Suche Geräte-ID",
+			"apply": "übernehmen",
+			"please operate device": "Bitte Gerät bedienen",
 			"different Addresses": "unterschiedliche Adressen",
 			"LongPress Detection Time":"Auswertedauer für gehaltene Taste",
 			"Pushbutton with Indicator Light":"Taster mit Kontrollleuchte",

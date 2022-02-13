@@ -1,7 +1,9 @@
 <?php
 	class mEnOceanFEEPD20500 extends IPSModule
 	{
+		#=====================================================================================
 		public function Create() 
+		#=====================================================================================
 		{
 			//Never delete this line!
 			parent::Create();
@@ -29,101 +31,128 @@
 				"DataByte0":0
 			}');
 
+			#	ListenTimer
+			$this->RegisterTimer('ListenTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Listen", -1);');
+			$this->SetBuffer('Listen', 0);
+
 			//Connect to available enocean gateway
 			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
 
 		}
 
-		public function Destroy(){
-		    //Never delete this line!
-		    parent::Destroy();
+		#=====================================================================================
+		public function Destroy()
+		#=====================================================================================
+		{
+			//Never delete this line!
+			parent::Destroy();
 
 		}
-    
+
+		#=====================================================================================
 		public function ApplyChanges()
+		#=====================================================================================
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
 
 			$this->RegisterVariableInteger('Position', $this->Translate('Position'), "~Shutter");
+			$this->EnableAction('Position');	
 			
-#			Filter setzen
-			$ID = hexdec($this->ReadPropertyString("ReturnID"));
-			if($ID & 0x80000000)$ID -=  0x100000000;
-			$this->SendDebug("DeviceID", (int)$ID, 0);
-			$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)$ID.",.*");
-
-#			Slider für Position aktivieren
-			$this->EnableAction("Position");	
-
+			#	Filter setzen
+			$this->SetFilter();
 		}
 		
+		#=====================================================================================
 		public function ReceiveData($JSONString)
+		#=====================================================================================
 		{
 			$this->SendDebug("Received", $JSONString, 0);
 			$data = json_decode($JSONString);
 
-	        switch($data->Device) {
-	            case "210":
+			if($this->GetReturnID($data, array(210)))return;
+
+			switch($data->Device) {
+				case "210":
 					$position = $data->DataByte3;
 					$this->SendDebug("Received Position", $position."%", 0);
 					$this->SetValue("Position", $position);	
-	                break;
-	            default:
+					break;
+				default:
 					$this->LogMessage("Unknown Message", KL_ERROR);
-	        }
+			}
 		
 		}
 		
-        public function RequestAction($Ident, $Value) 
+		#=====================================================================================
+		public function RequestAction($Ident, $Value) 
+		#=====================================================================================
 		{
-            switch($Ident) {
-                case "Position":
+			switch($Ident) {
+				case "Position":
 					$this->ShutterMoveTo($Value);
-                    break;
-                default:
-                    throw new Exception("Invalid Ident");
-            }
-        }
+					break;
+				case "Listen":
+					$this->Listen($Value);
+					break;
+				case "SetReturnID":
+					$this->UpdateFormField('ReturnID', 'value', $Value);
+					break;
+				default:
+					throw new Exception("Invalid Ident");
+			}
+		}
 		
-        public function ShutterMoveTo(int $position) 
+		#=====================================================================================
+		public function ShutterMoveTo(int $position) 
+		#=====================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DataByte0 = 1;
 			$data->DataByte3 = $position;
 			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
 			$this->SendData(json_encode($data));
-        }
+		}
 		
-        public function ShutterStop() 
+		#=====================================================================================
+		public function ShutterStop() 
+		#=====================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DataLength= 1;
 			$data->DataByte0 = 2;
 			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
 			$this->SendData(json_encode($data));
-        }
+		}
 		
-        public function ShutterMoveDown() 
+		#=====================================================================================
+		public function ShutterMoveDown() 
+		#=====================================================================================
 		{
 			$this->ShutterMoveTo(100);
-        }
+		}
 		
-        public function ShutterMoveUp() 
+		#=====================================================================================
+		public function ShutterMoveUp() 
+		#=====================================================================================
 		{
 			$this->ShutterMoveTo(0);
-        }
+		}
 		
-        public function UpdatePosition() 
+		#=====================================================================================
+		public function UpdatePosition() 
+		#=====================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DataLength= 1;
 			$data->DataByte0 = 3;
 			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
 			$this->SendData(json_encode($data));
-        }
+		}
 		
-        public function SetAlarmAction(int $action) 
+		#=====================================================================================
+		public function SetAlarmAction(int $action) 
+		#=====================================================================================
 		{
 			if($action < 0 || $action >3) $action = 7;
 			$data = json_decode($this->ReadPropertyString("BaseData"));
@@ -134,9 +163,11 @@
 			$data->DataByte4 = 127;
 			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
 			$this->SendData(json_encode($data));
-        }
+		}
 		
-        public function SetRunTime(int $milliseconds) 
+		#=====================================================================================
+		public function SetRunTime(int $milliseconds) 
+		#=====================================================================================
 		{
 			$milliseconds = (int)($milliseconds/10);
 			if($milliseconds < 500 || $milliseconds >32767) $milliseconds = 32767;
@@ -148,9 +179,11 @@
 			$data->DataByte4 = (int)($milliseconds/256);
 			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
 			$this->SendData(json_encode($data));
-        }
+		}
 		
-        public function TeachIn() 
+		#=====================================================================================
+		public function TeachIn() 
+		#=====================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->Device = 212;
@@ -164,9 +197,11 @@
 			$data->DataByte6 = 145;
 			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
 			$this->SendData(json_encode($data));
-        }
+		}
 		
-        public function TeachOut() 
+		#=====================================================================================
+		public function TeachOut() 
+		#=====================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->Device = 212;
@@ -180,35 +215,114 @@
 			$data->DataByte6 = 161;
 			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
 			$this->SendData(json_encode($data));
-        }
+		}
 
+		#=====================================================================================
 		protected function SendData($data)
+		#=====================================================================================
 		{
 			$this->SendDataToParent($data);
 			$this->SendDebug("Sended", $data, 0);
 		} 
 
 
+		#=====================================================================================
 		protected function SendDebug($Message, $Data, $Format)
+		#=====================================================================================
 		{
 			if (is_array($Data))
 			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
+				foreach ($Data as $Key => $DebugData)
+				{
 						$this->SendDebug($Message . ":" . $Key, $DebugData, 0);
-			    }
+				}
 			}
 			else if (is_object($Data))
 			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
+				foreach ($Data as $Key => $DebugData)
+				{
 						$this->SendDebug($Message . "." . $Key, $DebugData, 0);
-			    }
+				}
 			}
 			else
 			{
-			    parent::SendDebug($Message, $Data, $Format);
+				parent::SendDebug($Message, $Data, $Format);
 			}
 		} 
-	}
+		
+		#=====================================================================================
+		private function Listen($value) 
+		#=====================================================================================
+		{
+			$this->SetReceiveDataFilter('');
+			if($value > 0){
+				$this->SetBuffer('DeviceIDs','[]');
+				$this->UpdateFormField('FoundIDs', 'values', json_encode(array()));
+			}
+			$this->SetTimerInterval('ListenTimer', 1000);
+			$remain = intval($this->GetBuffer('Listen')) + $value;
+			if($remain == 0)$this->SetFilter();
+			if($remain > 60) $remain = 60;
+			$this->UpdateFormField('Remaining', 'current', $remain);
+			$this->UpdateFormField('Remaining', 'caption', "$remain / 60s");
+			$this->SetBuffer('Listen', $remain);
+		}
+		
+		#=====================================================================================
+		private function GetReturnID($data, $DataValues) 
+		#=====================================================================================
+		{
+			if($this->GetTimerInterval('ListenTimer') == 0) return false;
 
+			$values = json_decode($this->GetBuffer('DeviceIDs'));
+			$Devices = $this->GetDeviceArray();
+			if(in_array($data->Device, $DataValues)){
+				$ID = $data->DeviceID;
+				if($ID <= 0)return true;
+				$DeviceID = sprintf('%08X',$ID);
+				if(strpos($this->GetBuffer('DeviceIDs'), $DeviceID) === false){
+					$values[] = array(
+						"ReturnID" => $DeviceID, 
+						"InstanceID" => isset($Devices[$DeviceID])?$Devices[$DeviceID]:0 ,
+						"rowColor"=>isset($Devices[$DeviceID])?"#C0FFC0":-1
+					);
+					$this->UpdateFormField('FoundIDs', 'values', json_encode($values));
+					$this->SetBuffer('DeviceIDs', json_encode($values));
+				}
+			}
+			return true;
+		}
+
+		#=====================================================================================
+		private function GetDeviceArray()
+		#=====================================================================================
+		{
+			$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
+			if($Gateway == 0) return;
+			$Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
+			$DeviceArray = array();
+			foreach ($Devices as $Device){
+				if(IPS_GetInstance($Device)["ConnectionID"] == $Gateway){
+					$config = json_decode(IPS_GetConfiguration($Device));
+					if(!property_exists($config, 'ReturnID'))continue;
+					$DeviceArray[strtoupper(trim($config->ReturnID))] = $Device;
+				}
+			}
+			return $DeviceArray;
+		}
+
+		#=====================================================================================
+		private function SetFilter() 
+		#=====================================================================================
+		{
+			#	ListenTimer ausschalten
+			$this->SetTimerInterval('ListenTimer', 0);
+
+			#	Filter setzen
+			$ID = hexdec($this->ReadPropertyString("ReturnID"));
+			if($ID & 0x80000000)$ID -=  0x100000000;
+			$filter = sprintf('.*\"DeviceID\":%s,.*', (int)$ID);
+			$this->SendDebug('Filter', $filter, 0);
+			$this->SetReceiveDataFilter($filter);
+		}
+	}

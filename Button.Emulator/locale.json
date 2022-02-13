@@ -1,7 +1,8 @@
 {
 	"translations": {
 		"de": { 
-			"DeviceID": "Geräte-ID"
+			"DeviceID": "Geräte-ID",
+			"Find free DeviceID": "Suche freie Geräte-ID"
 		}
 	}
 }

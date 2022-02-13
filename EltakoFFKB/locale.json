@@ -1,7 +1,11 @@
 {
 	"translations": {
 		"de": { 
-			"DeviceID": "Geräte-ID",
+			"ReturnID": "Geräte-ID",
+			"InstanceID": "InstanzID",
+			"Find ReturnID": "Suche Geräte-ID",
+			"apply": "übernehmen",
+			"please operate device": "Bitte Gerät bedienen",
 			"Battery Voltage": "Batteriespannung",
 			"Energy Storage": "Energiespeicher",
 			"Contact": "Kontakt"

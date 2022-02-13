@@ -129,8 +129,13 @@
 	  </tr>
 	  <tr>
 		<td>V3.10</td>
-		<td>Fix: Filterproblem bei 64-bit Windows-Systemen</td>
-		<td>Neu: Button-Emulator funktioniert unabhängig von der Enocean-Hardware</td>
+		<td>Fix: Filterproblem bei 64-bit Windows-Systemen<br>
+			Neu: Button-Emulator funktioniert unabhängig von der Enocean-Hardware</td>
+	  </tr>
+	  <tr>
+		<td>V3.11</td>
+		<td>Neu: Suche nach der nächsten freien Sende-ID<br>
+			Neu: Suche nach der Geräte/Melde-ID</td>
 	  </tr>
 	</table>
   </body>

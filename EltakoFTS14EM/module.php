@@ -29,6 +29,10 @@ class EltakoFTS14EM extends IPSModule
 			$this->RegisterTimer('Button'.$pos, 0, 'IPS_RequestAction($_IPS["TARGET"], "LongPress", "'.$pos.'");');
 		}
 
+		#	ListenTimer
+		$this->RegisterTimer('ListenTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Listen", -1);');
+		$this->SetBuffer('Listen', 0);
+
 		#	Connect to available enocean gateway
 		$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
 	}
@@ -52,16 +56,7 @@ class EltakoFTS14EM extends IPSModule
 		$this->SendDebug('ButtonType', $this->ReadPropertyBoolean('ButtonType')?"true":"false", 0);
 
 		#	Filter setzen
-		$BaseID = (int)hexdec($this->ReadPropertyString('ReturnID'));
-		if($BaseID & 0x80000000)$BaseID -=  0x100000000;
-		if($this->ReadPropertyBoolean('ButtonType')){
-			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s),.*', $BaseID+1, $BaseID+3, $BaseID+5, $BaseID+7, $BaseID+9);
-		}else{
-			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s|%s|%s|%s|%s|%s),.*', $BaseID, $BaseID+1, $BaseID+2, $BaseID+3, $BaseID+4, $BaseID+5, $BaseID+6, $BaseID+7, $BaseID+8, $BaseID+9);
-		}
-
-		$this->SendDebug('Filter', $filter, 0);
-		$this->SetReceiveDataFilter($filter);
+		$this->SetFilter();
 	}
 
 	#================================================================================================
@@ -70,6 +65,8 @@ class EltakoFTS14EM extends IPSModule
 	{
 		$this->SendDebug("Receive", $JSONString, 0);
 		$data = json_decode($JSONString);
+
+		if($this->GetReturnID($data, array(16 => 2, 48 => 0, 80 => 3, 112 => 1)))return;
 
 		$Position = array(16 => 0, 48 => 1, 80 => 0, 112 => 1);
 		$BaseID = (int)hexdec($this->ReadPropertyString('ReturnID'));
@@ -114,6 +111,14 @@ class EltakoFTS14EM extends IPSModule
 			case "LongPress":
 				$this->LongPress($Value);
 				break;
+			case "Listen":
+				$this->Listen($Value);
+				break;
+			case "SetReturnID":
+				$this->UpdateFormField('ReturnID', 'value', $Value);
+				break;
+			default:
+				throw new Exception("Invalid Ident");
 		}
 	}
 
@@ -155,6 +160,86 @@ class EltakoFTS14EM extends IPSModule
 		{
 			parent::SendDebug($Message, $Data, $Format);
 		}
+	}
+	 
+	#=====================================================================================
+	private function Listen($value) 
+	#=====================================================================================
+	{
+		$this->SetReceiveDataFilter('');
+		if($value > 0){
+			$this->SetBuffer('DeviceIDs','[]');
+			$this->UpdateFormField('FoundIDs', 'values', json_encode(array()));
+		}
+		$this->SetTimerInterval('ListenTimer', 1000);
+		$remain = intval($this->GetBuffer('Listen')) + $value;
+		if($remain == 0)$this->SetFilter();
+		if($remain > 60) $remain = 60;
+		$this->UpdateFormField('Remaining', 'current', $remain);
+		$this->UpdateFormField('Remaining', 'caption', "$remain / 60s");
+		$this->SetBuffer('Listen', $remain);
+	}
+	 
+	#=====================================================================================
+	private function GetReturnID($data, $DataValues) 
+	#=====================================================================================
+	{
+		if($this->GetTimerInterval('ListenTimer') == 0) return false;
+
+		$values = json_decode($this->GetBuffer('DeviceIDs'));
+		$Devices = $this->GetDeviceArray();
+		if(isset($DataValues[$data->DataByte0])){
+			$ID = $data->DeviceID - $data->DeviceID%16 + 1;
+			if($ID <= 0)return true;
+			$DeviceID = sprintf('%08X',$ID);
+			if(strpos($this->GetBuffer('DeviceIDs'), $DeviceID) === false){
+				$values[] = array(
+					"ReturnID" => $DeviceID, 
+					"InstanceID" => isset($Devices[$DeviceID])?$Devices[$DeviceID]:0 ,
+					"rowColor"=>isset($Devices[$DeviceID])?"#C0FFC0":-1
+				);
+				$this->UpdateFormField('FoundIDs', 'values', json_encode($values));
+				$this->SetBuffer('DeviceIDs', json_encode($values));
+			}
+		}
+		return true;
+	}
+
+	#=====================================================================================
+    private function GetDeviceArray()
+	#=====================================================================================
+    {
+		$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
+		if($Gateway == 0) return;
+        $Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
+        $DeviceArray = array();
+        foreach ($Devices as $Device){
+            if(IPS_GetInstance($Device)["ConnectionID"] == $Gateway){
+                $config = json_decode(IPS_GetConfiguration($Device));
+                if(!property_exists($config, 'ReturnID'))continue;
+                $DeviceArray[strtoupper(trim($config->ReturnID))] = $Device;
+            }
+        }
+        return $DeviceArray;
+    }
+
+	#=====================================================================================
+	private function SetFilter() 
+	#=====================================================================================
+	{
+		#	ListenTimer ausschalten
+		$this->SetTimerInterval('ListenTimer', 0);
+
+		#	Filter setzen
+		$BaseID = (int)hexdec($this->ReadPropertyString('ReturnID'));
+		if($BaseID & 0x80000000)$BaseID -=  0x100000000;
+		if($this->ReadPropertyBoolean('ButtonType')){
+			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s),.*', $BaseID+1, $BaseID+3, $BaseID+5, $BaseID+7, $BaseID+9);
+		}else{
+			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s|%s|%s|%s|%s|%s),.*', $BaseID, $BaseID+1, $BaseID+2, $BaseID+3, $BaseID+4, $BaseID+5, $BaseID+6, $BaseID+7, $BaseID+8, $BaseID+9);
+		}
+		$this->SendDebug('Filter', $filter, 0);
+		$this->SetReceiveDataFilter($filter);
 	}
 }
 ?>
