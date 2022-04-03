@@ -195,12 +195,14 @@
 						default:
 					}
 
-					#	Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
-					$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
+					if(isset($newValue)){
+						#	Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
+						$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
 
-					#	neue Position ermitteln
-					$newPosition = round($newValue / $DownTime * 100 * $Factor);
-					$this->SetValue("position", $newPosition);
+						#	neue Position ermitteln
+						$newPosition = round($newValue / $DownTime * 100 * $Factor);
+						$this->SetValue("position", $newPosition);
+					}
 
 					$this->SetValue("action", 0);
                     break;

@@ -155,6 +155,9 @@
 		<td>V3.04</td>
 		<td>Fix: Ident slatangle wurde nicht gefunden</td>
 	  </tr>
+		<td>V3.12</td>
+		<td>Fix: newValue-Error</td>
+	  </tr>
 	</table>
   </body>
 </html>

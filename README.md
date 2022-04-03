@@ -139,7 +139,8 @@
 	  </tr>
 	  <tr>
 		<td>V3.12</td>
-		<td>Neu: Button-Emulator - Tastenseite auswählbar</td>
+		<td>Neu: Button-Emulator - Tastenseite auswählbar<br>
+			Fix: Eltako-Shutter - newValue-Error</td>
 	  </tr>
 	</table>
   </body>
