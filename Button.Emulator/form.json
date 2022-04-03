@@ -13,6 +13,12 @@
 					"onClick": "IPS_RequestAction($id, \"FreeDeviceID\", \"\");"
 				}
 			]
+		},
+		{"name": "LeftSide", "type": "Select", "caption": "Buttons",
+			"options": [
+				{ "caption": "left", "value": true },
+				{ "caption": "right", "value": false }
+			]
 		}
 	],
     "actions":

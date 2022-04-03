@@ -46,6 +46,10 @@
 		<td>V3.10</td>
 		<td>Neu: Funktioniert unabhängig von der Enocean-Hardware</td>
 	  </tr>
+	  <tr>
+		<td>V3.12</td>
+		<td>Neu: Button-Emulator - Tastenseite auswählbar</td>
+	  </tr>
 	</table>
   </body>
 </html>

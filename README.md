@@ -137,6 +137,10 @@
 		<td>Neu: Suche nach der nächsten freien Sende-ID<br>
 			Neu: Suche nach der Geräte/Melde-ID</td>
 	  </tr>
+	  <tr>
+		<td>V3.12</td>
+		<td>Neu: Button-Emulator - Tastenseite auswählbar</td>
+	  </tr>
 	</table>
   </body>
 </html>

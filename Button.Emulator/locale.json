@@ -2,7 +2,10 @@
 	"translations": {
 		"de": { 
 			"DeviceID": "Geräte-ID",
-			"Find free DeviceID": "Suche freie Geräte-ID"
+			"Find free DeviceID": "Suche freie Geräte-ID",
+			"Buttons": "Tasten",
+			"left": "links",
+			"right": "rechts"
 		}
 	}
 }

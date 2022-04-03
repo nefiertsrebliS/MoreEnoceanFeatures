@@ -31,6 +31,7 @@
 			parent::Create();
 
 			$this->RegisterPropertyInteger('DeviceID', 0);
+			$this->RegisterPropertyBoolean('LeftSide', false);
 		
 			//Connect to available enocean gateway
 			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
@@ -70,14 +71,14 @@
 		public function PressUp()
 		#================================================================================================
 		{
-			$this->SendState(112);
+			$this->SendState($this->ReadPropertyBoolean('LeftSide')?48:112);
 		}
 
 		#================================================================================================
 		public function ShortPressUp()
 		#================================================================================================
 		{
-			$this->SendState(112);
+			$this->SendState($this->ReadPropertyBoolean('LeftSide')?48:112);
 			IPS_Sleep(150);
 			$this->SendState(0);
 		}
@@ -86,14 +87,14 @@
 		public function PressDown()
 		#================================================================================================
 		{
-			$this->SendState(80);
+			$this->SendState($this->ReadPropertyBoolean('LeftSide')?16:80);
 		}
 
 		#================================================================================================
 		public function ShortPressDown()
 		#================================================================================================
 		{
-			$this->SendState(80);
+			$this->SendState($this->ReadPropertyBoolean('LeftSide')?16:80);
 			IPS_Sleep(150);
 			$this->SendState(0);
 		}
