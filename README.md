@@ -142,6 +142,10 @@
 		<td>Neu: Button-Emulator - Tastenseite auswählbar<br>
 			Fix: Eltako-Shutter - newValue-Error</td>
 	  </tr>
+	  <tr>
+		<td>V3.13</td>
+		<td>Fix: Fehler in ID-Berechnung</td>
+	  </tr>
 	</table>
   </body>
 </html>

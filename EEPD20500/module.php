@@ -110,7 +110,7 @@
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DataByte0 = 1;
 			$data->DataByte3 = $position;
-			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+			$data->DestinationID = $this->GetID();
 			$this->SendData(json_encode($data));
 		}
 		
@@ -121,7 +121,7 @@
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DataLength= 1;
 			$data->DataByte0 = 2;
-			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+			$data->DestinationID = $this->GetID();
 			$this->SendData(json_encode($data));
 		}
 		
@@ -146,7 +146,7 @@
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DataLength= 1;
 			$data->DataByte0 = 3;
-			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+			$data->DestinationID = $this->GetID();
 			$this->SendData(json_encode($data));
 		}
 		
@@ -161,7 +161,7 @@
 			$data->DataByte1 = $action;
 			$data->DataByte3 = 255;
 			$data->DataByte4 = 127;
-			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+			$data->DestinationID = $this->GetID();
 			$this->SendData(json_encode($data));
 		}
 		
@@ -177,7 +177,7 @@
 			$data->DataByte1 = 7;
 			$data->DataByte3 = $milliseconds%256;
 			$data->DataByte4 = (int)($milliseconds/256);
-			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+			$data->DestinationID = $this->GetID();
 			$this->SendData(json_encode($data));
 		}
 		
@@ -195,7 +195,7 @@
 			$data->DataByte4 = 70;
 			$data->DataByte5 = 1;
 			$data->DataByte6 = 145;
-			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+			$data->DestinationID = $this->GetID();
 			$this->SendData(json_encode($data));
 		}
 		
@@ -213,7 +213,7 @@
 			$data->DataByte4 = 70;
 			$data->DataByte5 = 1;
 			$data->DataByte6 = 161;
-			$data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+			$data->DestinationID = $this->GetID();
 			$this->SendData(json_encode($data));
 		}
 
@@ -319,10 +319,18 @@
 			$this->SetTimerInterval('ListenTimer', 0);
 
 			#	Filter setzen
-			$ID = hexdec($this->ReadPropertyString("ReturnID"));
-			if($ID & 0x80000000)$ID -=  0x100000000;
+			$ID = $this->GetID();
 			$filter = sprintf('.*\"DeviceID\":%s,.*', (int)$ID);
 			$this->SendDebug('Filter', $filter, 0);
 			$this->SetReceiveDataFilter($filter);
+		}
+
+		#=====================================================================================
+		private function GetID() 
+		#=====================================================================================
+		{
+			$ID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+			if($ID & 0x80000000)$ID -=  0x100000000;
+			return($ID);
 		}
 	}

@@ -145,7 +145,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
         $data = json_decode($this->ReadPropertyString("BaseData"));
         $data->DataByte0 = 72;
         $data->DataByte2 = $position;
-        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+        $data->DestinationID = $this->GetID();
         $this->SendData(json_encode($data));
     }
 
@@ -155,7 +155,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
         $data->DataByte0 = 24; 
-        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+        $data->DestinationID = $this->GetID();
         $this->SendData(json_encode($data));
     }
 
@@ -165,7 +165,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
         $data->DataByte0 = 56; 
-        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+        $data->DestinationID = $this->GetID();
         $this->SendData(json_encode($data));
     }
 
@@ -175,7 +175,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
         $data->DataByte0 = 40; 
-        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+        $data->DestinationID = $this->GetID();
         $this->SendData(json_encode($data));
     }
 
@@ -185,7 +185,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
         $data->DataByte0 = 8; 
-        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+        $data->DestinationID = $this->GetID();
         $this->SendData(json_encode($data));
     }
 
@@ -201,7 +201,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
         $data->DataByte0 = 120;
         $data->DataByte1 = $secondsUp;
         $data->DataByte2 = $secondsDown;
-        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+        $data->DestinationID = $this->GetID();
         $this->SendData(json_encode($data));
     }
 
@@ -214,7 +214,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
         $data->DataByte1 = 255;
         $data->DataByte2 = 71;
         $data->DataByte3 = 224;
-        $data->DestinationID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+        $data->DestinationID = $this->GetID();
         $this->SendData(json_encode($data));
     }
 
@@ -319,10 +319,18 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
 		$this->SetTimerInterval('ListenTimer', 0);
 
 		#	Filter setzen
-		$ID = hexdec($this->ReadPropertyString("ReturnID"));
-		if($ID & 0x80000000)$ID -=  0x100000000;
+		$ID = $this->GetID();
         $filter = sprintf('.*\"DeviceID\":%s,.*', (int)$ID);
         $this->SendDebug('Filter', $filter, 0);
         $this->SetReceiveDataFilter($filter);
+	}
+
+	#=====================================================================================
+	private function GetID() 
+	#=====================================================================================
+	{
+		$ID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+		if($ID & 0x80000000)$ID -=  0x100000000;
+        return($ID);
 	}
 }

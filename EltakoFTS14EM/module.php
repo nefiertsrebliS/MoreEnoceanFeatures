@@ -69,8 +69,7 @@ class EltakoFTS14EM extends IPSModule
 		if($this->GetReturnID($data, array(16 => 2, 48 => 0, 80 => 3, 112 => 1)))return;
 
 		$Position = array(16 => 0, 48 => 1, 80 => 0, 112 => 1);
-		$BaseID = (int)hexdec($this->ReadPropertyString('ReturnID'));
-		$pos = $data->DeviceID - $BaseID;
+		$pos = $data->DeviceID - $this->GetID();
 		$this->SendDebug("Button".$pos, $data->DataByte0, 0);
 
 		switch($data->DataByte0) {
@@ -231,8 +230,7 @@ class EltakoFTS14EM extends IPSModule
 		$this->SetTimerInterval('ListenTimer', 0);
 
 		#	Filter setzen
-		$BaseID = (int)hexdec($this->ReadPropertyString('ReturnID'));
-		if($BaseID & 0x80000000)$BaseID -=  0x100000000;
+		$BaseID = $this->GetID();
 		if($this->ReadPropertyBoolean('ButtonType')){
 			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s),.*', $BaseID+1, $BaseID+3, $BaseID+5, $BaseID+7, $BaseID+9);
 		}else{
@@ -240,6 +238,15 @@ class EltakoFTS14EM extends IPSModule
 		}
 		$this->SendDebug('Filter', $filter, 0);
 		$this->SetReceiveDataFilter($filter);
+	}
+
+	#=====================================================================================
+	private function GetID() 
+	#=====================================================================================
+	{
+		$ID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+		if($ID & 0x80000000)$ID -=  0x100000000;
+        return($ID);
 	}
 }
 ?>

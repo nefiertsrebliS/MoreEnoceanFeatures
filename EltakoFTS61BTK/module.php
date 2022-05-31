@@ -101,7 +101,7 @@ class EltakoFTS61BTK extends IPSModule
 			case 0:
 				#	Taste losgelassen
 				if($this->ReadPropertyBoolean("AdressTyp")){
-					$ID = "Button".$Position[$data->DeviceID - (int)hexdec($this->ReadPropertyString("ReturnID"))];
+					$ID = "Button".$Position[$data->DeviceID - $this->GetID()];
 					$this->SetBuffer($ID, 0);
 					if($this->GetTimerInterval($ID) === 0) $this->SetValue($ID, 0);
 			}else{
@@ -407,8 +407,7 @@ class EltakoFTS61BTK extends IPSModule
 		$this->SetTimerInterval('ListenTimer', 0);
 
 		#	Filter setzen
-		$BaseID = (int)hexdec($this->ReadPropertyString('ReturnID'));
-		if($BaseID & 0x80000000)$BaseID -=  0x100000000;
+		$BaseID = $this->GetID();
 		if($this->ReadPropertyBoolean('AdressTyp')){
 			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s),.*', $BaseID, $BaseID+1, $BaseID+2, $BaseID+3);
 		}else{
@@ -416,6 +415,15 @@ class EltakoFTS61BTK extends IPSModule
 		}
 		$this->SendDebug('Filter', $filter, 0);
 		$this->SetReceiveDataFilter($filter);
+	}
+
+	#=====================================================================================
+	private function GetID() 
+	#=====================================================================================
+	{
+		$ID = (int)hexdec($this->ReadPropertyString("ReturnID"));
+		if($ID & 0x80000000)$ID -=  0x100000000;
+        return($ID);
 	}
 }
 ?>
