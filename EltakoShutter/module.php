@@ -43,6 +43,9 @@
 			$this->RegisterTimer('ListenTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Listen", -1);');
 			$this->SetBuffer('Listen', 0);
 
+			#	UpdateTimer
+			$this->RegisterTimer('UpdateTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Update", "");');
+
 			//Connect to available enocean gateway
 			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
 
@@ -101,6 +104,9 @@
 				$this->UpdateFormField("TurnWithoutTravel", "visible", false);
 			}
 
+			#	Position merken
+			$this->SetBuffer('Position', $this->GetValue('position'));
+
 			#	Filter setzen
 			$this->SetFilter();
 		}
@@ -111,6 +117,7 @@
 		{
 			$this->SendDebug("Receive", $JSONString, 0);
 			$data = json_decode($JSONString);
+			$this->SetTimerInterval('UpdateTimer', 0);
 
 			if($this->GetReturnID($data, array(165, 246)))return;
 
@@ -144,77 +151,63 @@
 
 				#	ShutterDevice liefert Richtung und Fahrzeit
                 case "165":
-					$dt = ((int)$data->DataByte2 + (int)$data->DataByte3 * 255) / 10;
+					$dir = ($data->DataByte1 == 1)? -1:1;	# -1: öffnen, 1: schließen
+					$dt = $dir * ((int)$data->DataByte2 + (int)$data->DataByte3 * 255) / 10;
+
 					$DownTime = $this->ReadPropertyFloat("DownTime");
 					$UpTime = $this->ReadPropertyFloat("UpTime");
 					$RollFactor = $this->ReadPropertyFloat("RollFactor");
-					if($this->ReadPropertyFloat("SlatTurnTime") > 0)$oldAngle = $this->GetValue("slatangle");
 
-					switch($data->DataByte1) {
-						case 1:
-							#	Lamellenwinkel bei Jalousien ermitteln
-							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
-								$newAngle = round($oldAngle - $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100);
-								$this->SetValue("slatangle", ($newAngle < 0)?0:$newAngle);
+					# Lamellenwinkel und Position ermitteln
+					if($this->ReadPropertyFloat("SlatTurnTime") > 0){
+						if($dir >0){
+							$dtSlat = (100 - $this->GetValue("slatangle")) / 100 * $this->ReadPropertyFloat("SlatTurnTime");
+						}else{
+							$dtSlat = -$this->GetValue("slatangle") / 100 * $this->ReadPropertyFloat("SlatTurnTime");
+						}
 
-								#	Lamellenwinkel und Verfahren getrennt?
-								if($this->ReadPropertyBoolean("TurnWithoutTravel")){
-									$TurnTime = round(($oldAngle - $this->GetValue("slatangle")) * $this->ReadPropertyFloat("SlatTurnTime") / 100 ,1);
-									$dt = ($dt > $TurnTime)? $dt - $TurnTime : 0;
-									$DownTime -= $this->ReadPropertyFloat("SlatTurnTime");
-									$UpTime -= $this->ReadPropertyFloat("SlatTurnTime");
-								}
-							}
-
-							#	neue Fahrzeit für 0 bis aktuelle Position ermitteln
-							$dt = $dt / $UpTime * $DownTime;
-							$newValue = $this->GetValue("movetime") - $dt;
-							if($newValue < 0)$newValue = 0;
-							$this->SetValue("movetime", $newValue);
-						    break;
-						case 2:
-							#	Lamellenwinkel bei Jalousien ermitteln
-							if($this->ReadPropertyFloat("SlatTurnTime") > 0){
-								$newAngle = round($oldAngle + $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100);
-								$this->SetValue("slatangle", ($newAngle > 100)?100:$newAngle);
-
-								#	Lamellenwinkel und Verfahren getrennt?
-								if($this->ReadPropertyBoolean("TurnWithoutTravel")){
-									$TurnTime = round(($this->GetValue("slatangle") - $oldAngle) * $this->ReadPropertyFloat("SlatTurnTime") / 100 ,1);
-									$dt = ($dt > $TurnTime)? $dt - $TurnTime : 0;
-									$DownTime -= $this->ReadPropertyFloat("SlatTurnTime");
-									$UpTime -= $this->ReadPropertyFloat("SlatTurnTime");
-								}
-							}
-
-							#	neue Fahrzeit für 0 bis aktuelle Position ermitteln
-							$newValue = $this->GetValue("movetime") + $dt;
-							if($newValue > $DownTime)$newValue = $DownTime;
-							$this->SetValue("movetime", $newValue);
-						    break;
-						default:
+						#	Lamellenwinkel und Position?
+						if (abs($dt) > abs($dtSlat)){
+							$this->SetValue("slatangle", ($dir > 0)?100:0);
+							#	Lamellenwinkel und Verfahren getrennt?
+							if($this->ReadPropertyBoolean("TurnWithoutTravel")) $dt -= $dtSlat;
+						}else{ 
+							$newAngle = round($this->GetValue("slatangle") + $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100);
+							$newAngle = ($newAngle > 100)?100:$newAngle;
+							$newAngle = ($newAngle < 0)?0:$newAngle;
+							$this->SetValue("slatangle", $newAngle); 
+							#	Lamellenwinkel und Verfahren getrennt?
+							if($this->ReadPropertyBoolean("TurnWithoutTravel")) $dt = 0;
+						}  
 					}
 
-					if(isset($newValue)){
-						#	Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
-						$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
+					#	neue Position ermitteln
+					$newValue = $this->GetValue("movetime") + $dt;
+					if($newValue < 0)$newValue = 0;
+					if($newValue > $DownTime)$newValue = $DownTime;
+					$this->SetValue("movetime", $newValue);
 
-						#	neue Position ermitteln
-						$newPosition = round($newValue / $DownTime * 100 * $Factor);
-						$this->SetValue("position", $newPosition);
-					}
+					#	Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
+					$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
+
+					#	neue Position ermitteln
+					$newPosition = round($newValue / $DownTime * 100 * $Factor);
+					$this->SetValue("position", $newPosition); 
+					$this->SetBuffer('Position', $newPosition);
 
 					$this->SetValue("action", 0);
                     break;
-
+					
 				#	SwitchDevice liefert Richtung und Endposition
                 case "246":
 					switch($data->DataByte0) {
 						case 1:
 							$this->SetValue("action", -1);
+							$this->SetTimerInterval('UpdateTimer', 1000);
 						    break;
 						case 2:
 							$this->SetValue("action", 1);
+							$this->SetTimerInterval('UpdateTimer', 1000);
 						    break;
 						case 80:
 							$this->SetValue("action", 0);
@@ -274,6 +267,9 @@
 					break;
 				case "Listen":
 					$this->Listen($Value);
+					break;
+				case "Update":
+					$this->Update($Value);
 					break;
 				case "SetReturnID":
 					$this->UpdateFormField('ReturnID', 'value', $Value);
@@ -423,6 +419,16 @@
 			#	Movetime und Direction bestimmen
 			$moveTime = $newTime - $oldTime;
 
+			# Korrektur bei SlatTurnTime und TurnWithoutTravel
+			if($this->ReadPropertyFloat("SlatTurnTime") > 0 && $this->ReadPropertyBoolean("TurnWithoutTravel")){
+				if($moveTime > 0){
+					$moveTime += (100 - $this->GetValue("slatangle")) / 100 * $this->ReadPropertyFloat("SlatTurnTime");
+				}else{
+					$moveTime -= $this->GetValue("slatangle") / 100 * $this->ReadPropertyFloat("SlatTurnTime");
+				}
+			}
+
+			# Ausführen
 			if($moveTime > 0){
 				$this->ShutterMoveDownEx(round($moveTime,1));
 			}elseif($moveTime < 0){
@@ -460,9 +466,6 @@
 			$data = json_decode($this->ReadPropertyString("BaseData"));
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
 			$moveTime = round(($angle - $this->GetValue("slatangle")) / 100 * $this->ReadPropertyFloat("SlatTurnTime") ,1);
-
-			if ($moveTime > 0){
-			}
 
 			if($moveTime > 0){
 				$this->ShutterMoveDownEx($moveTime);
@@ -544,6 +547,27 @@
 		}
 		
 		#=====================================================================================
+		private function Update($value) 
+		#=====================================================================================
+		{
+			$Position = $this->GetBuffer("Position");
+			$Action = $this->GetValue("action");
+			$DownTime = $this->ReadPropertyFloat("DownTime");
+			$dt = $this->GetTimerInterval('UpdateTimer') / 1000;
+			if($Action < 0){
+				$newPosition = $Position - 100 / $DownTime * $dt;
+				if($newPosition < 0)$newPosition = 0;
+				$this->SetBuffer('Position', $newPosition);
+				$this->SetValue("position", round($newPosition)); 
+			}elseif($Action > 0){
+				$newPosition = $Position + 100 / $DownTime * $dt;
+				if($newPosition > 100)$newPosition = 100;
+				$this->SetBuffer('Position', $newPosition);
+				$this->SetValue("position", round($newPosition)); 
+			}
+		}
+		
+		#=====================================================================================
 		private function GetReturnID($data, $DataValues) 
 		#=====================================================================================
 		{
@@ -595,8 +619,10 @@
 
 			#	Filter setzen
 			$ID = hexdec($this->ReadPropertyString("ReturnID"));
-			if($ID & 0x80000000)$ID -=  0x100000000;
-			$filter = sprintf('.*\"DeviceID\":%s,.*', (int)$ID);
+			if(IPS_GetKernelVersion() < 6.3){
+				if($ID & 0x80000000)$ID -=  0x100000000;
+			}
+			$filter = sprintf('.*\"DeviceID\":%s,.*', $ID);
 			$this->SendDebug('Filter', $filter, 0);
 			$this->SetReceiveDataFilter($filter);
 		}

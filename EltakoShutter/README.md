@@ -158,6 +158,11 @@
 		<td>V3.12</td>
 		<td>Fix: newValue-Error</td>
 	  </tr>
+	  <tr>
+		<td>V3.14</td>
+		<td>Neu: Shutter aktualisiert die Position über Laufzeit<br>
+			Fix: Anpassung ID-Berechnung auf IPS 6.3</td>
+	  </tr>
 	</table>
   </body>
 </html>

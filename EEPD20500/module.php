@@ -320,7 +320,7 @@
 
 			#	Filter setzen
 			$ID = $this->GetID();
-			$filter = sprintf('.*\"DeviceID\":%s,.*', (int)$ID);
+			$filter = sprintf('.*\"DeviceID\":%s,.*', $ID);
 			$this->SendDebug('Filter', $filter, 0);
 			$this->SetReceiveDataFilter($filter);
 		}
@@ -329,8 +329,10 @@
 		private function GetID() 
 		#=====================================================================================
 		{
-			$ID = (int)hexdec($this->ReadPropertyString("ReturnID"));
-			if($ID & 0x80000000)$ID -=  0x100000000;
+			$ID = hexdec($this->ReadPropertyString("ReturnID"));
+			if(IPS_GetKernelVersion() < 6.3){
+				if($ID & 0x80000000)$ID -=  0x100000000;
+			}
 			return($ID);
 		}
 	}

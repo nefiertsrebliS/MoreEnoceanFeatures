@@ -192,8 +192,10 @@
 
 			#	Filter setzen
 			$ID = hexdec($this->ReadPropertyString("ReturnID"));
-			if($ID & 0x80000000)$ID -=  0x100000000;
-			$filter = sprintf('.*\"DeviceID\":%s,.*', (int)$ID);
+			if(IPS_GetKernelVersion() < 6.3){
+				if($ID & 0x80000000)$ID -=  0x100000000;
+			}
+			$filter = sprintf('.*\"DeviceID\":%s,.*', $ID);
 			$this->SendDebug('Filter', $filter, 0);
 			$this->SetReceiveDataFilter($filter);
 		}

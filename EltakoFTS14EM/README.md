@@ -15,6 +15,7 @@ Die Instanz wertet Signale des Eingabemoduls FTS14EM nach kurzem, langem Tastend
 | V3.08   | Basisversion					            	|
 | V3.09   | Fix: LongPressDetectionTime			            |
 | V3.10   | Fix: Filterproblem bei 64-bit Windows-Systemen  |
+| V3.14   | FIX: Anpassung ID-Berechnung auf IPS 6.3        |
 
 ## License
 

@@ -26,6 +26,7 @@ Die Instanz wertet Signale von Enocean-Tastern nach kurzem, langem Tastendruck u
 | --------|-------------------------------------------------|
 | V3.07   | Basisversion						            |
 | V3.10   | FIX: Filterproblem bei 64-bit Windows-Systemen	|
+| V3.14   | FIX: Anpassung ID-Berechnung auf IPS 6.3        |
 
 ## License
 

@@ -14,6 +14,10 @@
 		<td>V3.05</td>
 		<td>Grundversion</td>
 	  </tr>
+	  <tr>
+		<td>V3.14</td>
+		<td>Fix: Anpassung ID-Berechnung auf IPS 6.3</td>
+	  </tr>
 	</table>
   </body>
 </html>
