@@ -151,6 +151,10 @@
 		<td>Neu: Shutter aktualisiert die Position über Laufzeit<br>
 			Fix: Anpassung ID-Berechnung auf IPS 6.3</td>
 	  </tr>
+	  <tr>
+		<td>V3.15</td>
+		<td>Fix: FTS14EM Button 10 ohne Funktion</td>
+	  </tr>
 	</table>
   </body>
 </html>

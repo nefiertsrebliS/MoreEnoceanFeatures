@@ -70,6 +70,7 @@ class EltakoFTS14EM extends IPSModule
 
 		$Position = array(16 => 0, 48 => 1, 80 => 0, 112 => 1);
 		$pos = $data->DeviceID - $this->GetID();
+		if($pos == 15) $pos = 9;
 		$this->SendDebug("Button".$pos, $data->DataByte0, 0);
 
 		switch($data->DataByte0) {
@@ -232,9 +233,9 @@ class EltakoFTS14EM extends IPSModule
 		#	Filter setzen
 		$BaseID = $this->GetID();
 		if($this->ReadPropertyBoolean('ButtonType')){
-			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s),.*', $BaseID+1, $BaseID+3, $BaseID+5, $BaseID+7, $BaseID+9);
+			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s),.*', $BaseID+1, $BaseID+3, $BaseID+5, $BaseID+7, $BaseID+15);
 		}else{
-			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s|%s|%s|%s|%s|%s),.*', $BaseID, $BaseID+1, $BaseID+2, $BaseID+3, $BaseID+4, $BaseID+5, $BaseID+6, $BaseID+7, $BaseID+8, $BaseID+9);
+			$filter = sprintf('.*\"DeviceID\":(%s|%s|%s|%s|%s|%s|%s|%s|%s|%s),.*', $BaseID, $BaseID+1, $BaseID+2, $BaseID+3, $BaseID+4, $BaseID+5, $BaseID+6, $BaseID+7, $BaseID+8, $BaseID+15);
 		}
 		$this->SendDebug('Filter', $filter, 0);
 		$this->SetReceiveDataFilter($filter);
