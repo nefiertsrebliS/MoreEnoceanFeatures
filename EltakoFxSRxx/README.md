@@ -47,7 +47,7 @@
 	<h2>Changelog</h2>
 	<table>
 	  <tr>
-		<td>V1.00</td>
+		<td>V3.16</td>
 		<td>Grundversion</td>
 	  </tr>
 	</table>

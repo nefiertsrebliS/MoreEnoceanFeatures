@@ -155,6 +155,10 @@
 		<td>V3.15</td>
 		<td>Fix: FTS14EM Button 10 ohne Funktion</td>
 	  </tr>
+	  <tr>
+		<td>V3.16</td>
+		<td>Neu: Eltako FxSRxx von rolf1</td>
+	  </tr>
 	</table>
   </body>
 </html>
