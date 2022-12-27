@@ -1,0 +1,21 @@
+{
+	"translations": {
+		"de": { 
+			"Command": "Befehl",
+			"Position": "Position",
+			"DeviceID": "Geräte-ID",
+			"InstanceID": "InstanzID",
+			"ReturnID": "Melde-ID",
+			"Find ReturnID": "Suche Melde-ID",
+			"Find free DeviceID": "Suche freie Geräte-ID",
+			"please operate device": "Bitte Gerät bedienen",
+			"apply": "übernehmen",
+			"teachin": "einlernen",
+			"On": "An",
+			"Off": "Aus",
+			"1. fill in the DeviceID above": "1. Tragen Sie die Geräte-ID oben ein",
+			"2. press TEACHIN after activating the learnmode on your device": "2. Drücken Sie EINLERNEN, nachdem Sie das Gerät in den Lernmodus versetzt haben",
+			"Lock switching state": "Schaltzustand blockieren"
+		}
+	}
+}
