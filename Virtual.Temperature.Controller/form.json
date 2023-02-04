@@ -1,0 +1,24 @@
+{
+	"elements":
+	[
+		{	"type": "RowLayout", 
+			"items": [
+				{
+					"type": "NumberSpinner",
+					"name": "DeviceID",
+					"caption": "DeviceID"
+				},{
+					"type": "Button",
+					"caption": "Find free DeviceID",
+					"onClick": "IPS_RequestAction($id, \"FreeDeviceID\", \"\");"
+				}
+			]
+		},
+		{ "name": "TemperatureID", "type": "SelectVariable", "caption": "TemperatureID"},
+        { "type": "Button", "label": "learnmode", "onClick": "IPS_RequestAction($id, \"LearnMode\", \"\");" }
+	],
+    "actions":
+    [
+		{ "type": "TestCenter"	}
+    ]
+}

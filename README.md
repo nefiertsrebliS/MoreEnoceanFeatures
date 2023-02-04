@@ -159,6 +159,10 @@
 		<td>V3.16</td>
 		<td>Neu: Eltako FxSRxx von rolf1</td>
 	  </tr>
+	  <tr>
+		<td>V3.17</td>
+		<td>Neu: Virtueller Temperatur-Regler</td>
+	  </tr>
 	</table>
   </body>
 </html>

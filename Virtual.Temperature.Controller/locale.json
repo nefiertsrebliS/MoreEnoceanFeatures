@@ -1,0 +1,12 @@
+{
+	"translations": {
+		"de": { 
+			"DeviceID": "Geräte-ID",
+			"Find free DeviceID": "Suche freie Geräte-ID",
+			"learnmode": "Lernmodus",
+			"TemperatureID": "Temperatur-ID",
+			"Actual Temperature": "Ist-Temperatur",
+			"Target Temperature": "Soll-Temperatur"
+		}
+	}
+}
