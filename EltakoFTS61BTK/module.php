@@ -79,7 +79,6 @@ class EltakoFTS61BTK extends IPSModule
 				if(@$this->ReadPropertyInteger('StatusID'.$pos) > 0){
 					$this->RegisterMessage ($this->ReadPropertyInteger('StatusID'.$pos), VM_UPDATE);
 				}
-				$this->SendState($pos, false);
 			}
 		}
 	}
@@ -133,8 +132,6 @@ class EltakoFTS61BTK extends IPSModule
 	#================================================================================================
 	{
 		switch ($Message) {
-			case IM_CHANGESTATUS:
-				break;
 			case VM_UPDATE:
 
 				foreach(self::Position as $pos => $text){
