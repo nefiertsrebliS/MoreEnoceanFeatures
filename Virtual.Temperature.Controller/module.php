@@ -76,7 +76,6 @@
 			//Never delete this line!
 			parent::ApplyChanges();
 			if($this->ReadPropertyInteger('TemperatureID') > 0)$this->RegisterMessage ($this->ReadPropertyInteger('TemperatureID'), VM_UPDATE);
-			if ($this->HasActiveParent())$this->SetTargetValue($this->GetValue('target'));
 		}
 
 		#================================================================================================
