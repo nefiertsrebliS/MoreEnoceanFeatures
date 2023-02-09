@@ -76,7 +76,7 @@
 			//Never delete this line!
 			parent::ApplyChanges();
 			if($this->ReadPropertyInteger('TemperatureID') > 0)$this->RegisterMessage ($this->ReadPropertyInteger('TemperatureID'), VM_UPDATE);
-			$this->SetTargetValue($this->GetValue('target'));
+			if ($this->HasActiveParent())$this->SetTargetValue($this->GetValue('target'));
 		}
 
 		#================================================================================================
@@ -158,6 +158,10 @@
 			$data->DataByte2 = round($Target / 40 * 255);
 			$data->DataByte3 = 0;
 
+			if (!$this->HasActiveParent()) {
+				$this->LogMessage('Parent not active. No Data send', KL_WARNING);
+				return;
+			}
 			$this->SendDataToParent(json_encode($data));
 			$this->SendDebug("SendState", 'Actual:'.$Actual.'°C - Target:'.$Target.'°C', 0);
 		}

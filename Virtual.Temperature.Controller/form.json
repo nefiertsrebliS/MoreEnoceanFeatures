@@ -6,7 +6,8 @@
 				{
 					"type": "NumberSpinner",
 					"name": "DeviceID",
-					"caption": "DeviceID"
+					"caption": "DeviceID",
+					"minimum": 0
 				},{
 					"type": "Button",
 					"caption": "Find free DeviceID",
