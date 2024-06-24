@@ -102,10 +102,10 @@
 		    }
 		},
 		{ "type": "Label", "caption": "__________________________________________________________________________" },
-        { "type": "Button", "label": "open", "onClick": "MEF_ShutterMoveUp($id);" },
+        { "type": "Button", "label": "open", "onClick": "MEF_ShutterMoveTo($id, 0);" },
         { "type": "Button", "label": "step open", "onClick": "MEF_ShutterStepUp($id);" },
         { "type": "Button", "label": "stop", "onClick": "MEF_ShutterStop($id);" },
         { "type": "Button", "label": "step close", "onClick": "MEF_ShutterStepDown($id);" },
-        { "type": "Button", "label": "close", "onClick": "MEF_ShutterMoveDown($id);" }
+        { "type": "Button", "label": "close", "onClick": "MEF_ShutterMoveTo($id, 100);" }
     ]
 }

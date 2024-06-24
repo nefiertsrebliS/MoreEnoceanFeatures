@@ -163,6 +163,10 @@
 		<td>Neu: Shutter aktualisiert die Position über Laufzeit<br>
 			Fix: Anpassung ID-Berechnung auf IPS 6.3</td>
 	  </tr>
+	  <tr>
+		<td>V3.18</td>
+		<td>Fix: Shutter stoppt nicht am Fahrzeitende</td>
+	  </tr>
 	</table>
   </body>
 </html>

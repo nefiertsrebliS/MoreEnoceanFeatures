@@ -238,7 +238,7 @@
                 case "action":
 					switch($Value) {
 						case -2:
-							$this->ShutterMoveUp();
+							$this->ShutterMoveTo(0);
 						    break;
 						case -1:
 							$this->ShutterStepUp();
@@ -250,7 +250,7 @@
 							$this->ShutterStepDown();
 						    break;
 						case 2:
-							$this->ShutterMoveDown();
+							$this->ShutterMoveTo(100);
 						    break;
 						default:
 							$this->ShutterMoveTo($Value);
