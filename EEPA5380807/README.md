@@ -26,7 +26,7 @@
 		<li>Einlerntaste im Symcon-Modul drücken</li>
 	</ol>
 	<h3>Kalibrierung</h3>
-	Die Kalibrierung erfolgt durch den Befehl <b>MEF_SetRunTime</b> (siehe unten).<br>
+	Die Kalibrierung erfolgt durch den Befehl <b>MEF_SetRunTimeUpDown</b> (siehe unten).<br>
 	<h3>Mögliche PHP-Befehle</h3>
 	<table>
 	  <tr>
@@ -56,7 +56,7 @@
 	  </tr>
 	  <tr>
 		<td>6.</td>
-		<td><b><i>MEF_SetRunTime($ID, $secondsUp, $secondsDown)</i></b></td>
+		<td><b><i>MEF_SetRunTimeUpDown($ID, $secondsUp, $secondsDown)</i></b></td>
 		<td>Kalibrierwerte für die Rollladen-Fahrzeit an das Gerät senden</td>
 	  </tr>
 	</table>
@@ -73,6 +73,10 @@
 	  <tr>
 		<td>V3.14</td>
 		<td>Fix: Anpassung ID-Berechnung auf IPS 6.3</td>
+	  </tr>
+	  <tr>
+		<td>V3.19</td>
+		<td>Fix: MEF_SetRunTime: Parameter count does not match</td>
 	  </tr>
 	</table>
   </body>

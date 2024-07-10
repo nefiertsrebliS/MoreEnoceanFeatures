@@ -167,6 +167,10 @@
 		<td>V3.18</td>
 		<td>Fix: Shutter stoppt nicht am Fahrzeitende</td>
 	  </tr>
+	  <tr>
+		<td>V3.19</td>
+		<td>Fix: MEF_SetRunTime: Parameter count does not match</td>
+	  </tr>
 	</table>
   </body>
 </html>

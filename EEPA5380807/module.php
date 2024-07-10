@@ -190,7 +190,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#================================================================================================
-    public function SetRunTime(int $secondsUp, int $secondsDown)
+    public function SetRunTimeUpDown(int $secondsUp, int $secondsDown)
 	#================================================================================================
     {
         if($secondsUp <0)$secondsUp = 0;
