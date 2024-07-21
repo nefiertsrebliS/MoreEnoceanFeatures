@@ -112,6 +112,7 @@ class EltakoFTS61BTK extends IPSModule
 				break;
 			default:
 				#	Taste gedrückt
+				if (!array_key_exists($data->DataByte0, $DataPosition))break;
 				$nr = $DataPosition[$data->DataByte0];
 				$pos = $Position[$nr];
 				$this->SetBuffer("Button".$pos, 1);

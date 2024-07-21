@@ -169,7 +169,8 @@
 	  </tr>
 	  <tr>
 		<td>V3.19</td>
-		<td>Fix: MEF_SetRunTime: Parameter count does not match</td>
+		<td>Fix: MEF_SetRunTime: Parameter count does not match<br>
+			Fix: Undefined array key in Module EltakoFTS61BTK</td>
 	  </tr>
 	</table>
   </body>

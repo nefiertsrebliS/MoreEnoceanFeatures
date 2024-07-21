@@ -22,11 +22,12 @@ Die Instanz wertet Signale von Enocean-Tastern nach kurzem, langem Tastendruck u
 
 ## Changelog
 
-| Version | Changes								            |
-| --------|-------------------------------------------------|
-| V3.07   | Basisversion						            |
-| V3.10   | FIX: Filterproblem bei 64-bit Windows-Systemen	|
-| V3.14   | FIX: Anpassung ID-Berechnung auf IPS 6.3        |
+| Version | Changes								                    |
+| --------|---------------------------------------------------------|
+| V3.07   | Basisversion						                    |
+| V3.10   | FIX: Filterproblem bei 64-bit Windows-Systemen	        |
+| V3.14   | FIX: Anpassung ID-Berechnung auf IPS 6.3                |
+| V3.19   | FIX: Fix: Undefined array key in Module EltakoFTS61BTK  |
 
 ## License
 
