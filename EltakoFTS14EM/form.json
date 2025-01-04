@@ -54,13 +54,15 @@
 				}
 			]
 		},
-		{"name": "ButtonType", "type": "Select", "caption": "Pushbutton type",
+		{"name": "ButtonType", "type": "Select", "caption": "Device type",
 			"options": [
-				{ "caption": "Universal Pushbutton", "value": false },
-				{ "caption": "Directional Pushbutton", "value": true }
+				{ "caption": "Universal Pushbutton", "value": 0 },
+				{ "caption": "Directional Pushbutton", "value": 1 },
+				{ "caption": "Window-door Contact", "value": 2 },
+				{ "caption": "Motionsensor", "value": 3 }
 			]
 		},
-		{"name": "LongPressDetectionTime", "type": "NumberSpinner", "caption": "LongPress Detection Time", "suffix": " ms"}
+		{"name": "LongPressDetectionTime", "type": "NumberSpinner", "caption": "LongPress Detection Time", "suffix": " ms", "visible": true}
 	],
     "actions":
     [

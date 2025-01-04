@@ -1,12 +1,12 @@
 # Eltako Eingabemodul FTS14EM
 
-Die Instanz wertet Signale des Eingabemoduls FTS14EM nach kurzem, langem Tastendruck und Doppel-Klick aus. 
+Die Instanz wertet Tastersignale des Eingabemoduls FTS14EM nach kurzem, langem Tastendruck und Doppel-Klick aus. 
 
 ## Konfiguration
 
 * Mit der Geräte-ID wird die Basis-ID des Eingabemoduls festgelegt. 
-* Bei Eltako FTS14EM kann auf dem Gerät festlegt werden, ob die angeschlossenen Tasten aus Universal- oder Richtungstaster verwendet werden sollen. Bitte in der Instanz die gleiche Einstellung wählen.
-* Für die Auswertung, ob eine Taste länger gehalten wird, sind 250ms ein guter Standardwert. Dieser sollte nur verändert werden, wenn es zu Problemen mit der Erkennung kommt. Dies kann z.B. der Fall sein, wenn Taster schwergängig sind. Diese werden typischerweise nicht so schnell geklickt.
+* Bei Eltako FTS14EM kann auf dem Gerät festlegt werden, ob die angeschlossenen Geräte als Universal- oder Richtungstaster, Bewegungsmelder oder Tür-Fensterkontakte verwendet werden sollen. Bitte in der Instanz die gleiche Einstellung wählen.
+* Bei Verwendung von Tastern kann die Dauer eingestellt werden, ab wann ein Tastendruck als "langer Tastendruck" erkannt wird. Für Kurzhubtasten sind 250ms ein guter Standardwert. Bei klassischen mechanischen Tastern mit langem Hub sollte der Wert auf 500ms gestellt werden.
 
 ## Changelog
 
@@ -17,6 +17,7 @@ Die Instanz wertet Signale des Eingabemoduls FTS14EM nach kurzem, langem Tastend
 | V3.10   | Fix: Filterproblem bei 64-bit Windows-Systemen  |
 | V3.14   | FIX: Anpassung ID-Berechnung auf IPS 6.3        |
 | V3.15   | FIX: Button 10 ohne Funktion                    |
+| V3.20   | Neu: Bewegungsmelder und Tür-Fenster-Kontakte   |
 
 ## License
 

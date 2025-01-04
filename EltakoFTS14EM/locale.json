@@ -6,15 +6,22 @@
 			"Find ReturnID": "Suche Geräte-ID",
 			"apply": "übernehmen",
 			"please operate device": "Bitte Gerät bedienen",
-			"Pushbutton type": "Typ des Tasters",
+			"Device type": "Gerätetyp",
 			"Universal Pushbutton": "Universaltaster",
 			"Directional Pushbutton": "Richtungstaster",
+			"Window-door Contact": "Fenster-Türkontakt",
+			"Motionsensor": "Bewegungsmelder",
 			"LongPress Detection Time":"Auswertedauer für gehaltene Taste",
 			"Button": "Taste",
+			"Input": "Eingang",
 			"released": "losgelassen",
 			"short pressed": "kurz gedrückt",
 			"double clicked": "doppelt gedrückt",
-			"long pressed": "lange gedrückt"
+			"long pressed": "lange gedrückt",
+			"open": "offen",
+			"closed": "geschlossen",
+			"motion": "Bewegung erkannt",
+			"no motion": "keine Bewegung"
 		}
 	}
 }

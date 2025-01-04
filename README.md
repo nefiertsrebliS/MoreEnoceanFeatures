@@ -172,6 +172,10 @@
 		<td>Fix: MEF_SetRunTime: Parameter count does not match<br>
 			Fix: Undefined array key in Module EltakoFTS61BTK</td>
 	  </tr>
+	  <tr>
+		<td>V3.20</td>
+		<td>Neu: FTS14EM für Bewegungsmelder und Tür-Fenster-Kontakte</td>
+	  </tr>
 	</table>
   </body>
 </html>
