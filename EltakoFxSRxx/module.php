@@ -12,6 +12,7 @@ class EltakoFxSRxx extends IPSModule
         $this->RegisterPropertyInteger("DeviceID", 0);  // genutzte Sendeadresse (= BaseID + DeviceID) des Gateway 
 		$this->RegisterPropertyString("ReturnID", "00000000"); // Adresse des Aktors
         $this->RegisterPropertyBoolean("EnableBlocking", false); //aus der Form.json
+        $this->RegisterPropertyBoolean("EnableMeasurement", false); //FSR14M-2x: Messfunktion auswerten
         
         $this->RegisterPropertyString("BaseData", '{
         "DataID":"{70E3075F-A35D-4DEB-AC20-C929A156FE48}",
@@ -74,6 +75,12 @@ class EltakoFxSRxx extends IPSModule
         # Variable aktivieren
         $this->EnableAction("StatusVariable");
 
+        # Messfunktion (FSR14M-2x): Leistungsvariable anlegen
+        if($this->ReadPropertyBoolean("EnableMeasurement")){
+            $this->RegisterMeasurementProfile();
+            $this->RegisterVariableFloat("Power", $this->Translate("Power"), "MEF.Watt", 10);
+        }
+
         # Filter setzen
 		$this->SetFilter();
     }
@@ -88,6 +95,12 @@ class EltakoFxSRxx extends IPSModule
 		$this->SetTimerInterval('UpdateTimer', 0); 
 
         if($this->GetReturnID($data, array(165, 246)))return;
+
+        // FSR14M-2x: Messwert-Telegramm (EEP A5-12-01, RORG A5 = 165)
+        if($data->Device == 165){
+            if($this->ReadPropertyBoolean("EnableMeasurement")) $this->DecodeMeasurement($data);
+            return;
+        }
 
         // Byte0 > 112 = An, 80 = Aus; Setzt den Status anhand der Aktorrückmeldung
         switch($data->DataByte0) {
@@ -216,6 +229,46 @@ class EltakoFxSRxx extends IPSModule
             parent::SendDebug($Message, $Data, $Format);
         }
     }
+
+	#================================================================================================
+	private function DecodeMeasurement($data) //Wertet das EEP A5-12-01 Messwert-Telegramm aus
+	#================================================================================================
+	{
+		// EEP A5-12-01 (Eltako FSR14M-2x / FSR61VA / FSVA-230V):
+		// DB3..DB1 = 24-Bit-Messwert (DB3 = MSB), DB0 = Steuerbits
+		//   DB0_Bit3 = LRN  (1 = Datentelegramm, 0 = Lerntelegramm)
+		//   DB0_Bit2 = Inhalt (1 = Augenblicksleistung/W, 0 = Zählerstand/kWh)
+		//   DB0_Bit1..0 = Teiler (0=/1, 1=/10, 2=/100, 3=/1000)
+		// Der FSR14M-2x sendet ausschließlich Leistung (DB0 = 0x0C -> Wert direkt in W).
+		$db0 = $data->DataByte0;
+
+		// Lerntelegramm (0x48080D80) ignorieren -> nur Datentelegramme auswerten
+		if(($db0 & 0x08) == 0) return;
+
+		// Nur Leistungstelegramme auswerten (DB0_Bit2 = 1)
+		if((($db0 >> 2) & 0x01) != 1){
+			$this->SendDebug("Measure", "kein Leistungstelegramm, DB0=".$db0, 0);
+			return;
+		}
+
+		$raw = ($data->DataByte3 << 16) | ($data->DataByte2 << 8) | $data->DataByte1;
+		$divisor = pow(10, $db0 & 0x03);
+		$power = $raw / $divisor;
+
+		$this->SetValue("Power", $power);
+		$this->SendDebug("Measure", "Leistung = ".$power." W", 0);
+	}
+
+	#================================================================================================
+	private function RegisterMeasurementProfile() //Legt das Leistungsprofil an (unabhängig von Systemprofilen)
+	#================================================================================================
+	{
+		if(!IPS_VariableProfileExists("MEF.Watt")){
+			IPS_CreateVariableProfile("MEF.Watt", 2); // 2 = Float
+			IPS_SetVariableProfileDigits("MEF.Watt", 0);
+			IPS_SetVariableProfileText("MEF.Watt", "", " W");
+		}
+	}
 	 
 	#=====================================================================================
 	private function Listen($value) 

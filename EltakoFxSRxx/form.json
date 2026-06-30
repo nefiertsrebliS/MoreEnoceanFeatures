@@ -67,7 +67,8 @@
 				}
 			]
 		},
-		{"name": "EnableBlocking", "type": "CheckBox", "caption": "Lock switching state"}
+		{"name": "EnableBlocking", "type": "CheckBox", "caption": "Lock switching state"},
+		{"name": "EnableMeasurement", "type": "CheckBox", "caption": "Enable measurement (FSR14M-2x)"}
 	],
     "actions":
     [
