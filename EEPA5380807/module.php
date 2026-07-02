@@ -1,8 +1,8 @@
 <?php
-class mEnOceanF_EEP_A53808_7 extends IPSModule{
-
+class mEnOceanF_EEP_A53808_7 extends IPSModuleStrict
+{
 	#================================================================================================
-    public function Create()
+    public function Create(): void
 	#================================================================================================
     {
         //Never delete this line!
@@ -34,23 +34,18 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
 		#	ListenTimer
 		$this->RegisterTimer('ListenTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Listen", -1);');
 		$this->SetBuffer('Listen', 0);
-
-        //Connect to available enocean gateway
-        $this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
-
     }
 
 	#================================================================================================
-    public function Destroy()
+    public function Destroy(): void
 	#================================================================================================
     {
         //Never delete this line!
         parent::Destroy();
-
     }
 
 	#================================================================================================
-    public function ApplyChanges()
+    public function ApplyChanges(): void
 	#================================================================================================
     {
         //Never delete this line!
@@ -65,14 +60,27 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
 		$this->SetFilter();
     }
 
+    #================================================================================================
+    public function GetCompatibleParents(): string
+    #================================================================================================
+    {
+        return json_encode([
+            'type' => 'connect',
+            'moduleIDs' => [
+                // enocean gateway
+                '{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}'
+            ]
+        ]);
+    }
+
 	#================================================================================================
-    public function ReceiveData($JSONString)
+    public function ReceiveData(string $JSONString): string
 	#================================================================================================
     {
         $this->SendDebug("Received", $JSONString, 0);
         $data = json_decode($JSONString);
 
-		if($this->GetReturnID($data, array(165)))return;
+		if($this->GetReturnID($data, array(165)))return '';
 
         switch($data->Device) {
             case "165": 
@@ -99,11 +107,11 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
             default:
                 $this->LogMessage("Unknown Message", KL_ERROR);
         }
-
+        return '';
     }
 
 	#================================================================================================
-    public function RequestAction($Ident, $Value)
+    public function RequestAction(string $Ident, mixed $Value): void
 	#================================================================================================
     {
         switch($Ident) {
@@ -137,7 +145,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#================================================================================================
-    public function ShutterMoveTo(int $position)
+    public function ShutterMoveTo(int $position): void
 	#================================================================================================
     {
         if($position <0)$position = 0;
@@ -150,7 +158,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#================================================================================================
-    public function ShutterStop()
+    public function ShutterStop(): void
 	#================================================================================================
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
@@ -160,7 +168,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#================================================================================================
-    public function ShutterMoveDown()
+    public function ShutterMoveDown(): void
 	#================================================================================================
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
@@ -170,7 +178,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#================================================================================================
-    public function ShutterMoveUp()
+    public function ShutterMoveUp(): void
 	#================================================================================================
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
@@ -180,7 +188,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#================================================================================================
-    public function UpdatePosition()
+    public function UpdatePosition(): void
 	#================================================================================================
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
@@ -190,7 +198,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#================================================================================================
-    public function SetRunTimeUpDown(int $secondsUp, int $secondsDown)
+    public function SetRunTimeUpDown(int $secondsUp, int $secondsDown): void
 	#================================================================================================
     {
         if($secondsUp <0)$secondsUp = 0;
@@ -206,7 +214,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#================================================================================================
-    public function TeachIn()
+    public function TeachIn(): void
 	#================================================================================================
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
@@ -219,39 +227,22 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#================================================================================================
-    public function TeachOut()
+    public function TeachOut(): void
 	#================================================================================================
     {
         $this->TeachIn();
     }
 
 	#================================================================================================
-    protected function SendData($data)
+    protected function SendData(string $data): void
 	#================================================================================================
     {
         $this->SendDataToParent($data);
         $this->SendDebug("Sended", $data, 0);
     }
-
-	#================================================================================================
-    protected function SendDebug($Message, $Data, $Format)
-	#================================================================================================
-    {
-        if (is_array($Data)){
-            foreach ($Data as $Key => $DebugData){
-                $this->SendDebug($Message . ":" . $Key, $DebugData, 0);
-            }
-        }else if (is_object($Data)){
-            foreach ($Data as $Key => $DebugData){
-                $this->SendDebug($Message . "." . $Key, $DebugData, 0);
-            }
-        }else{
-            parent::SendDebug($Message, $Data, $Format);
-        }
-    }
 	 
 	#=====================================================================================
-	private function Listen($value) 
+	private function Listen(int $value): void
 	#=====================================================================================
 	{
 		$this->SetReceiveDataFilter('');
@@ -269,7 +260,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
 	}
 	 
 	#=====================================================================================
-	private function GetReturnID($data, $DataValues) 
+	private function GetReturnID(mixed $data, mixed $DataValues): bool
 	#=====================================================================================
 	{
 		if($this->GetTimerInterval('ListenTimer') == 0) return false;
@@ -294,11 +285,11 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
 	}
 
 	#=====================================================================================
-    private function GetDeviceArray()
+    private function GetDeviceArray(): mixed
 	#=====================================================================================
     {
 		$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-		if($Gateway == 0) return;
+		if($Gateway == 0) return array();
         $Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
         $DeviceArray = array();
         foreach ($Devices as $Device){
@@ -312,7 +303,7 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
     }
 
 	#=====================================================================================
-	private function SetFilter() 
+	private function SetFilter(): void
 	#=====================================================================================
 	{
 		#	ListenTimer ausschalten
@@ -326,13 +317,9 @@ class mEnOceanF_EEP_A53808_7 extends IPSModule{
 	}
 
 	#=====================================================================================
-	private function GetID() 
+	private function GetID(): int
 	#=====================================================================================
 	{
-		$ID = hexdec($this->ReadPropertyString("ReturnID"));
-        if(IPS_GetKernelVersion() < 6.3){
-            if($ID & 0x80000000)$ID -=  0x100000000;
-        }
-        return($ID);
+        return hexdec($this->ReadPropertyString("ReturnID"));
 	}
 }

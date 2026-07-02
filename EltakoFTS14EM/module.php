@@ -1,9 +1,9 @@
 <?php
-class EltakoFTS14EM extends IPSModule
+class EltakoFTS14EM extends IPSModuleStrict
 {
 
 	#================================================================================================
-	public function Create()
+	public function Create(): void
 	#================================================================================================
 	{
 		#	Never delete this line!
@@ -20,13 +20,10 @@ class EltakoFTS14EM extends IPSModule
 			#	LongPressTimer
 			$this->RegisterTimer('Button'.$pos, 0, 'IPS_RequestAction($_IPS["TARGET"], "LongPress", "'.$pos.'");');
 		}
-
-		#	Connect to available enocean gateway
-		$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
 	}
 
 	#================================================================================================
-	public function Destroy()
+	public function Destroy(): void
 	#================================================================================================
 	{
 		#	Never delete this line!
@@ -35,7 +32,7 @@ class EltakoFTS14EM extends IPSModule
 	}
 
 	#================================================================================================
-	public function ApplyChanges()
+	public function ApplyChanges(): void
 	#================================================================================================
 	{
 		#	Never delete this line!
@@ -84,7 +81,20 @@ class EltakoFTS14EM extends IPSModule
 	}
 
 	#================================================================================================
-	public function ReceiveData($JSONString)
+	public function GetCompatibleParents(): string
+	#================================================================================================
+	{
+		return json_encode([
+			'type' => 'connect',
+			'moduleIDs' => [
+				// enocean gateway
+				'{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}'
+			]
+		]);
+	}
+
+	#================================================================================================
+	public function ReceiveData(string $JSONString): string
 	#================================================================================================
 	{
 		$this->SendDebug("Received", $JSONString, 0);
@@ -92,7 +102,7 @@ class EltakoFTS14EM extends IPSModule
 
 		#	Tür-Fenster-Kontakt
 		if($this->ReadPropertyInteger('ButtonType') == 2){
-			if($this->GetReturnID($data, array(8 => 0, 9 => 1)))return;
+			if($this->GetReturnID($data, array(8 => 0, 9 => 1)))return '';
 			$pos = $data->DeviceID - $this->GetID();
 			if($pos == 15) $pos = 9;
 
@@ -102,7 +112,7 @@ class EltakoFTS14EM extends IPSModule
 
 		#	Bewegungsmelder
 		}elseif($this->ReadPropertyInteger('ButtonType') == 3){
-			if($this->GetReturnID($data, array(15 => 0, 13 => 1)))return;
+			if($this->GetReturnID($data, array(15 => 0, 13 => 1)))return '';
 			$pos = $data->DeviceID - $this->GetID();
 			if($pos == 15) $pos = 9;
 
@@ -112,7 +122,7 @@ class EltakoFTS14EM extends IPSModule
 
 		#	Taster
 		}else{
-			if($this->GetReturnID($data, array(16 => 2, 48 => 0, 80 => 3, 112 => 1)))return;
+			if($this->GetReturnID($data, array(16 => 2, 48 => 0, 80 => 3, 112 => 1)))return '';
 
 			$Position = array(16 => 0, 48 => 1, 80 => 0, 112 => 1);
 			$pos = $data->DeviceID - $this->GetID();
@@ -147,10 +157,11 @@ class EltakoFTS14EM extends IPSModule
 					}
 			}
 		}
+		return '';
 	}
 
 	#================================================================================================
-	public function RequestAction($Ident, $Value) 
+	public function RequestAction(string $Ident, mixed $Value): void
 	#================================================================================================
 	{
 		switch($Ident) {
@@ -169,7 +180,7 @@ class EltakoFTS14EM extends IPSModule
 	}
 
 	#================================================================================================
-	private function LongPress(string $Position)
+	private function LongPress(string $Position): void
 	#================================================================================================
 	{
 		$this->SetTimerInterval('Button'.$Position, 0);
@@ -183,33 +194,9 @@ class EltakoFTS14EM extends IPSModule
 			$this->SetValue('Button'.$Position, 0);
 		}
 	}
-
-	#================================================================================================
-	protected function SendDebug($Message, $Data, $Format)
-	#================================================================================================
-	{
-		if (is_array($Data))
-		{
-			foreach ($Data as $Key => $DebugData)
-			{
-				$this->SendDebug($Message . ":" . $Key, $DebugData, 0);
-			}
-		}
-		else if (is_object($Data))
-		{
-			foreach ($Data as $Key => $DebugData)
-			{
-				$this->SendDebug($Message . "." . $Key, $DebugData, 0);
-			}
-		}
-		else
-		{
-			parent::SendDebug($Message, $Data, $Format);
-		}
-	}
 	 
 	#=====================================================================================
-	private function Listen($value) 
+	private function Listen(int $value): void
 	#=====================================================================================
 	{
 		$this->SetReceiveDataFilter('');
@@ -227,7 +214,7 @@ class EltakoFTS14EM extends IPSModule
 	}
 	 
 	#=====================================================================================
-	private function GetReturnID($data, $DataValues) 
+	private function GetReturnID(mixed $data, mixed $DataValues): bool
 	#=====================================================================================
 	{
 		if($this->GetTimerInterval('ListenTimer') == 0) return false;
@@ -252,11 +239,11 @@ class EltakoFTS14EM extends IPSModule
 	}
 
 	#=====================================================================================
-    private function GetDeviceArray()
+    private function GetDeviceArray(): mixed
 	#=====================================================================================
     {
 		$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-		if($Gateway == 0) return;
+		if($Gateway == 0) return array();
         $Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
         $DeviceArray = array();
         foreach ($Devices as $Device){
@@ -270,7 +257,7 @@ class EltakoFTS14EM extends IPSModule
     }
 
 	#=====================================================================================
-	private function SetFilter() 
+	private function SetFilter(): void
 	#=====================================================================================
 	{
 		#	ListenTimer ausschalten
@@ -288,18 +275,14 @@ class EltakoFTS14EM extends IPSModule
 	}
 
 	#=====================================================================================
-	private function GetID() 
+	private function GetID(): int
 	#=====================================================================================
 	{
-		$ID = hexdec($this->ReadPropertyString("ReturnID"));
-		if(IPS_GetKernelVersion() < 6.3){
-			if($ID & 0x80000000)$ID -=  0x100000000;
-		}
-		return($ID);
+		return hexdec($this->ReadPropertyString("ReturnID"));
 	}
 	 
 	#=====================================================================================
-	public function GetConfigurationForm()
+	public function GetConfigurationForm(): string
 	#=====================================================================================
 	{
 		$form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);

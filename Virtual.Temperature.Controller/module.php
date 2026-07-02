@@ -1,5 +1,5 @@
 <?php
-	class EnoceanVirtTempControl extends IPSModule
+	class EnoceanVirtTempControl extends IPSModuleStrict
 	{
 		private const BaseData      = '{
 			"DataID":"{70E3075F-A35D-4DEB-AC20-C929A156FE48}",
@@ -24,7 +24,7 @@
 		}';
 
 		#================================================================================================
-		public function Create() 
+		public function Create(): void
 		#================================================================================================
 		{
 			//Never delete this line!
@@ -55,13 +55,10 @@
 			$this->EnableAction('target');
 			#	LongPressTimer
 			$this->RegisterTimer('SendState', 300000, 'IPS_RequestAction($_IPS["TARGET"], "SendState", "");');
-		
-			//Connect to available enocean gateway
-			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
 		}
 
 		#================================================================================================
-		public function Destroy()
+		public function Destroy(): void
 		#================================================================================================
 		{
 		    //Never delete this line!
@@ -70,7 +67,7 @@
 		}
     
 		#================================================================================================
-		public function ApplyChanges()
+		public function ApplyChanges(): void
 		#================================================================================================
 		{
 			//Never delete this line!
@@ -79,12 +76,25 @@
 		}
 
 		#================================================================================================
-		public function RequestAction($Ident, $Value)
+		public function GetCompatibleParents(): string
+		#================================================================================================
+		{
+			return json_encode([
+				'type' => 'connect',
+				'moduleIDs' => [
+					// enocean gateway
+					'{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}'
+				]
+			]);
+		}
+
+		#================================================================================================
+		public function RequestAction(string $Ident, mixed $Value): void
 		#================================================================================================
 		{
 			switch($Ident) {
 				case "FreeDeviceID":
-					$this->UpdateFormField('DeviceID', 'value', $this->FreeDeviceID());
+					if($this->FreeDeviceID() > 0) $this->UpdateFormField('DeviceID', 'value', $this->FreeDeviceID());
 					break;
 				case "LearnMode":
 					$this->SendLearn();
@@ -105,7 +115,7 @@
 		}
 		
 		#================================================================================================
-		public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+		public function MessageSink(int $TimeStamp, int $SenderID, int $Message, mixed $Data): void
 		#================================================================================================
 		{
 			switch ($Message) {
@@ -122,7 +132,7 @@
 		}
 		
 		#================================================================================================
-		public function SetTargetValue(float $Value)
+		public function SetTargetValue(float $Value): void
 		#================================================================================================
 		{
 			if($Value < 8)$Value = 8;
@@ -132,7 +142,7 @@
 		}
 		
 		#================================================================================================
-		public function SetActualValue(float $Value)
+		public function SetActualValue(float $Value): void
 		#================================================================================================
 		{
 			if($Value < 0) $Value = 0;
@@ -142,7 +152,7 @@
 		}
 
 		#================================================================================================
-		protected function SendState($Actual, $Target)
+		protected function SendState(float $Actual, float $Target): void
 		#================================================================================================
 		{
 			$data = json_decode(self::BaseData);
@@ -166,7 +176,7 @@
 		}
 
 		#================================================================================================
-		protected function SendLearn()
+		protected function SendLearn(): void
 		#================================================================================================
 		{
 			$data = json_decode(self::BaseData);
@@ -184,11 +194,11 @@
 		}
 
 		#================================================================================================
-		protected function FreeDeviceID()
+		protected function FreeDeviceID(): int
 		#================================================================================================
 		{
 			$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-			if($Gateway == 0) return;
+			if($Gateway == 0) return -1;
 			$Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
 			$DeviceArray = array();
 			foreach ($Devices as $Device){
@@ -202,28 +212,4 @@
 			for($ID = 1; $ID<=256; $ID++)if(!in_array($ID,$DeviceArray))break;
 			return $ID == 256?0:$ID;
 		}
-
-		#================================================================================================
-		protected function SendDebug($Message, $Data, $Format)
-		#================================================================================================
-		{
-			if (is_array($Data))
-			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
-						$this->SendDebug($Message . ":" . $Key, $DebugData, 0);
-			    }
-			}
-			else if (is_object($Data))
-			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
-						$this->SendDebug($Message . "." . $Key, $DebugData, 0);
-			    }
-			}
-			else
-			{
-			    parent::SendDebug($Message, $Data, $Format);
-			}
-		} 
 	}

@@ -176,6 +176,10 @@
 		<td>V3.20</td>
 		<td>Neu: FTS14EM für Bewegungsmelder und Tür-Fenster-Kontakte</td>
 	  </tr>
+	  <tr>
+		<td>V4.00</td>
+		<td>Umstellung auf IPSModuleStrict</td>
+	  </tr>
 	</table>
   </body>
 </html>

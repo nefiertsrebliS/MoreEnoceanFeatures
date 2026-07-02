@@ -3,9 +3,9 @@
 	"author": "Silberstreifen",
 	"name": "MoreEnoceanFeatures",
 	"url": "",
-	"version": "3.20",
+	"version": "4.00",
     "compatibility": {
-        "version": "5.3"
+        "version": "8.2"
     },
 	"build": 0,
 	"date": 0
