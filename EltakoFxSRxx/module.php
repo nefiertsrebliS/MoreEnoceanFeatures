@@ -106,7 +106,7 @@ class EltakoFxSRxx extends IPSModuleStrict
         // FSR14M-2x: Messwert-Telegramm (EEP A5-12-01, RORG A5 = 165)
         if($data->Device == 165){
             if($this->ReadPropertyBoolean("EnableMeasurement")) $this->DecodeMeasurement($data);
-            return;
+            return '';
         }
 
         // Byte0 > 112 = An, 80 = Aus; Setzt den Status anhand der Aktorrückmeldung
@@ -150,9 +150,6 @@ class EltakoFxSRxx extends IPSModuleStrict
                     $this->SwitchNormal(false);
                 }
                 break;
-            case "SetReturnID":
-				$this->UpdateFormField('ReturnID', 'value', $Value);
-				break;
             default:
                 throw new Exception("Invalid Ident");
         }
@@ -166,13 +163,11 @@ class EltakoFxSRxx extends IPSModuleStrict
         $data->DeviceID = $this->ReadPropertyInteger("DeviceID");
         $data->DataByte3 = 1;
         
-        if($switch) //Ein
-            {
+        if($switch){ //Ein
             $data->DataByte0 = 9;
-            }else //Aus
-            {
+        }else{  //Aus
             $data->DataByte0 = 8;
-            }
+        }
         
         $this->SendData(json_encode($data));
     }
@@ -186,13 +181,11 @@ class EltakoFxSRxx extends IPSModuleStrict
         $data->DeviceID = $this->ReadPropertyInteger("DeviceID");
         $data->DataByte3 = 1;
         
-        if($switch) //Ein
-            {
+        if($switch){ //Ein
             $data->DataByte0 = 13;
-            }else //Aus
-            {
+        }else{  //Aus
             $data->DataByte0 = 12;
-            }
+        }
          
         $this->SendData(json_encode($data));
     }
@@ -222,24 +215,7 @@ class EltakoFxSRxx extends IPSModuleStrict
     }
 
 	#================================================================================================
-    protected function SendDebug($Message, $Data, $Format)
-	#================================================================================================
-    {
-        if (is_array($Data)){
-            foreach ($Data as $Key => $DebugData){
-                $this->SendDebug($Message . ":" . $Key, $DebugData, 0);
-            }
-        }else if (is_object($Data)){
-            foreach ($Data as $Key => $DebugData){
-                $this->SendDebug($Message . "." . $Key, $DebugData, 0);
-            }
-        }else{
-            parent::SendDebug($Message, $Data, $Format);
-        }
-    }
-
-	#================================================================================================
-	private function DecodeMeasurement($data) //Wertet das EEP A5-12-01 Messwert-Telegramm aus
+	private function DecodeMeasurement(object $data): void //Wertet das EEP A5-12-01 Messwert-Telegramm aus
 	#================================================================================================
 	{
 		// EEP A5-12-01 (Eltako FSR14M-2x / FSR61VA / FSVA-230V):
@@ -268,7 +244,7 @@ class EltakoFxSRxx extends IPSModuleStrict
 	}
 
 	#================================================================================================
-	private function RegisterMeasurementProfile() //Legt das Leistungsprofil an (unabhängig von Systemprofilen)
+	private function RegisterMeasurementProfile(): void //Legt das Leistungsprofil an (unabhängig von Systemprofilen)
 	#================================================================================================
 	{
 		if(!IPS_VariableProfileExists("MEF.Watt")){

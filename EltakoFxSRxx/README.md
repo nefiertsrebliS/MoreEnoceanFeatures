@@ -60,7 +60,7 @@
 		<td>Grundversion</td>
 	  </tr>
 	  <tr>
-		<td>V3.21</td>
+		<td>V4.01</td>
 		<td>Neu: FSR14M-2x - Auswertung der Messfunktion (Augenblicksleistung in W, EEP A5-12-01)</td>
 	  </tr>
 	</table>

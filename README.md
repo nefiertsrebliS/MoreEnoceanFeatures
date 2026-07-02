@@ -180,6 +180,10 @@
 		<td>V4.00</td>
 		<td>Umstellung auf IPSModuleStrict</td>
 	  </tr>
+	  <tr>
+		<td>V4.01</td>
+		<td>Neu: FSR14M-2x - Auswertung der Messfunktion (Augenblicksleistung in W, EEP A5-12-01)</td>
+	  </tr>
 	</table>
   </body>
 </html>
