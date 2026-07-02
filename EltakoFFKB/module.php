@@ -1,8 +1,8 @@
 <?php
-	class mEnOceanFEltakoFFKB extends IPSModule
+	class mEnOceanFEltakoFFKB extends IPSModuleStrict
 	{
 		#=====================================================================================
-		public function Create() 
+		public function Create(): void
 		#=====================================================================================
 		{
 			//Never delete this line!
@@ -28,7 +28,7 @@
 		}
 
 		#=====================================================================================
-		public function Destroy()
+		public function Destroy(): void
 		#=====================================================================================
 		{
 		    //Never delete this line!
@@ -37,7 +37,7 @@
 		}
     
 		#=====================================================================================
-		public function ApplyChanges()
+		public function ApplyChanges(): void
 		#=====================================================================================
 		{
 			//Never delete this line!
@@ -50,15 +50,28 @@
 			#	Filter setzen
 			$this->SetFilter();
 		}
+
+		#================================================================================================
+		public function GetCompatibleParents(): string
+		#================================================================================================
+		{
+			return json_encode([
+				'type' => 'connect',
+				'moduleIDs' => [
+					// enocean gateway
+					'{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}'
+				]
+			]);
+		}
 		
 		#=====================================================================================
-		public function ReceiveData($JSONString)
+		public function ReceiveData(string $JSONString): string
 		#=====================================================================================
 		{
 			$this->SendDebug("Received", $JSONString, 0);
 			$data = json_decode($JSONString);
 
-			if($this->GetReturnID($data, array(165, 213)))return;
+			if($this->GetReturnID($data, array(165, 213)))return '';
 
 	        switch($data->Device) {
 	            case "165":
@@ -79,11 +92,11 @@
 	            default:
 					$this->LogMessage("Unknown Message", KL_ERROR);
 	        }
-		
+			return '';
 		}
 		
 		#=====================================================================================
-		public function RequestAction($Ident, $Value) 
+		public function RequestAction(string $Ident, mixed $Value): void
 		#=====================================================================================
 		{
 			switch($Ident) {
@@ -97,33 +110,9 @@
 					throw new Exception("Invalid Ident");
 			}
 		}
-
-		#=====================================================================================
-		protected function SendDebug($Message, $Data, $Format)
-		#=====================================================================================
-		{
-			if (is_array($Data))
-			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
-						$this->SendDebug($Message . ":" . $Key, $DebugData, 0);
-			    }
-			}
-			else if (is_object($Data))
-			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
-						$this->SendDebug($Message . "." . $Key, $DebugData, 0);
-			    }
-			}
-			else
-			{
-			    parent::SendDebug($Message, $Data, $Format);
-			}
-		} 
 		
 		#=====================================================================================
-		private function Listen($value) 
+		private function Listen(int $value): void
 		#=====================================================================================
 		{
 			$this->SetReceiveDataFilter('');
@@ -141,7 +130,7 @@
 		}
 		
 		#=====================================================================================
-		private function GetReturnID($data, $DataValues) 
+		private function GetReturnID(mixed $data, mixed $DataValues): bool
 		#=====================================================================================
 		{
 			if($this->GetTimerInterval('ListenTimer') == 0) return false;
@@ -166,11 +155,11 @@
 		}
 
 		#=====================================================================================
-		private function GetDeviceArray()
+		private function GetDeviceArray(): mixed
 		#=====================================================================================
 		{
 			$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-			if($Gateway == 0) return;
+			if($Gateway == 0) return array();
 			$Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
 			$DeviceArray = array();
 			foreach ($Devices as $Device){
@@ -184,7 +173,7 @@
 		}
 
 		#=====================================================================================
-		private function SetFilter() 
+		private function SetFilter(): void
 		#=====================================================================================
 		{
 			#	ListenTimer ausschalten
@@ -192,9 +181,6 @@
 
 			#	Filter setzen
 			$ID = hexdec($this->ReadPropertyString("ReturnID"));
-			if(IPS_GetKernelVersion() < 6.3){
-				if($ID & 0x80000000)$ID -=  0x100000000;
-			}
 			$filter = sprintf('.*\"DeviceID\":%s,.*', $ID);
 			$this->SendDebug('Filter', $filter, 0);
 			$this->SetReceiveDataFilter($filter);

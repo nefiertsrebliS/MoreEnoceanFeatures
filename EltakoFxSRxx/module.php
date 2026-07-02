@@ -1,9 +1,9 @@
 <?php
-class EltakoFxSRxx extends IPSModule
+class EltakoFxSRxx extends IPSModuleStrict
 {
 
 	#================================================================================================
-    public function Create()
+    public function Create(): void
 	#================================================================================================
     {
         //Never delete this line!
@@ -47,23 +47,18 @@ class EltakoFxSRxx extends IPSModule
 
         #	UpdateTimer
 		$this->RegisterTimer('UpdateTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Update", "");');
-
-        //Connect to available enocean gateway
-        $this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
-
     }
 
 	#================================================================================================
-    public function Destroy()
+    public function Destroy(): void
 	#================================================================================================
     {
         //Never delete this line!
         parent::Destroy();
-
     }
 
 	#================================================================================================
-    public function ApplyChanges() 
+    public function ApplyChanges(): void
 	#================================================================================================
     {
         //Never delete this line!
@@ -85,16 +80,28 @@ class EltakoFxSRxx extends IPSModule
 		$this->SetFilter();
     }
 
+    #================================================================================================
+    public function GetCompatibleParents(): string
+    #================================================================================================
+    {
+        return json_encode([
+            'type' => 'connect',
+            'moduleIDs' => [
+                // enocean gateway
+                '{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}'
+            ]
+        ]);
+    }
 
 	#================================================================================================
-	public function ReceiveData($JSONString) //Verarbeitet die Rückmeldung des Aktors
+	public function ReceiveData(string $JSONString): string
 	#================================================================================================
 	{
 		$this->SendDebug("Receive", $JSONString, 0);
        	$data = json_decode($JSONString);
 		$this->SetTimerInterval('UpdateTimer', 0); 
 
-        if($this->GetReturnID($data, array(165, 246)))return;
+        if($this->GetReturnID($data, array(165, 246)))return '';
 
         // FSR14M-2x: Messwert-Telegramm (EEP A5-12-01, RORG A5 = 165)
         if($data->Device == 165){
@@ -112,17 +119,18 @@ class EltakoFxSRxx extends IPSModule
             break;
             default:
                 throw new Exception("Invalid Ident");
-        }      
+        }
+        return '';   
     }
 
 
     #================================================================================================
-    public function RequestAction($Ident, $Value)
+    public function RequestAction(string $Ident, mixed $Value): void
     #================================================================================================
     {
         switch($Ident) {
             case "FreeDeviceID":
-                $this->UpdateFormField('DeviceID', 'value', $this->FreeDeviceID());
+                if($this->FreeDeviceID() > 0) $this->UpdateFormField('DeviceID', 'value', $this->FreeDeviceID());
                 break;
             case "Listen":
                 $this->Listen($Value);
@@ -151,7 +159,7 @@ class EltakoFxSRxx extends IPSModule
     }
 	
     #================================================================================================
-    public function SwitchNormal(bool $switch) //Sendet einfaches ein-/ausschalten
+    public function SwitchNormal(bool $switch): void //Sendet einfaches ein-/ausschalten
 	#================================================================================================
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
@@ -171,7 +179,7 @@ class EltakoFxSRxx extends IPSModule
     
 
     #================================================================================================
-    public function SwitchBlocking(bool $switch) //Sendet ein-/ausschalten mit Sperre des Aktors für Tasterbefehle
+    public function SwitchBlocking(bool $switch): void //Sendet ein-/ausschalten mit Sperre des Aktors für Tasterbefehle
     #================================================================================================
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
@@ -191,7 +199,7 @@ class EltakoFxSRxx extends IPSModule
 
 	
 	#================================================================================================
-    public function TeachIn() //Sendet ein TeachIn als "GFVS" an den Aktor
+    public function TeachIn(): void //Sendet ein TeachIn als "GFVS" an den Aktor
 	#================================================================================================
     {
         $data = json_decode($this->ReadPropertyString("BaseData"));
@@ -206,7 +214,7 @@ class EltakoFxSRxx extends IPSModule
 
 
 	#================================================================================================
-    protected function SendData($data)
+    protected function SendData(string $data): void
 	#================================================================================================
     {
         $this->SendDataToParent($data);
@@ -271,7 +279,7 @@ class EltakoFxSRxx extends IPSModule
 	}
 	 
 	#=====================================================================================
-	private function Listen($value) 
+	private function Listen(int $value): void
 	#=====================================================================================
 	{
 		$this->SetReceiveDataFilter('');
@@ -289,7 +297,7 @@ class EltakoFxSRxx extends IPSModule
 	}
 	 
 	#=====================================================================================
-	private function GetReturnID($data, $DataValues) 
+	private function GetReturnID(mixed $data, mixed $DataValues): bool
 	#=====================================================================================
 	{
 		if($this->GetTimerInterval('ListenTimer') == 0) return false;
@@ -314,11 +322,11 @@ class EltakoFxSRxx extends IPSModule
 	}
 
 	#=====================================================================================
-    private function GetDeviceArray()
+    private function GetDeviceArray(): mixed
 	#=====================================================================================
     {
 		$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-		if($Gateway == 0) return;
+		if($Gateway == 0) return array();
         $Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
         $DeviceArray = array();
         foreach ($Devices as $Device){
@@ -332,7 +340,7 @@ class EltakoFxSRxx extends IPSModule
     }
 
 	#=====================================================================================
-	private function SetFilter() 
+	private function SetFilter(): void
 	#=====================================================================================
 	{
 		#	ListenTimer ausschalten
@@ -346,22 +354,18 @@ class EltakoFxSRxx extends IPSModule
 	}
 
 	#=====================================================================================
-	private function GetID() 
+	private function GetID(): int
 	#=====================================================================================
 	{
-		$ID = hexdec($this->ReadPropertyString("ReturnID"));
-        if(IPS_GetKernelVersion() < 6.3){
-            if($ID & 0x80000000)$ID -=  0x100000000;
-        }
-        return($ID);
+        return hexdec($this->ReadPropertyString("ReturnID"));
 	}
 
 	#================================================================================================
-	protected function FreeDeviceID()  //Ermitteln der nächsten freien Adresse des Gateways
+	protected function FreeDeviceID(): int  //Ermitteln der nächsten freien Adresse des Gateways
 	#================================================================================================
 	{
 		$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-		if($Gateway == 0) return;
+		if($Gateway == 0) return -1;
 		$Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
 		$DeviceArray = array();
 		foreach ($Devices as $Device){
@@ -375,6 +379,4 @@ class EltakoFxSRxx extends IPSModule
 		for($ID = 1; $ID<=256; $ID++)if(!in_array($ID,$DeviceArray))break;
 		return $ID == 256?0:$ID;
 	}
-		
-
 }

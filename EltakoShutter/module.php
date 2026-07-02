@@ -1,8 +1,8 @@
 <?php
-	class EltakoShutter extends IPSModule
+	class EltakoShutter extends IPSModuleStrict
 	{
 		#================================================================================================
-		public function Create()
+		public function Create(): void
 		#================================================================================================
 		{
 			//Never delete this line!
@@ -46,9 +46,6 @@
 			#	UpdateTimer
 			$this->RegisterTimer('UpdateTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Update", "");');
 
-			//Connect to available enocean gateway
-			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
-
 			#	Fehlende Profile erzeugen
 			if (!IPS_VariableProfileExists('ShutterMoveStop.MEF')) {
 				IPS_CreateVariableProfile('ShutterMoveStop.MEF', 1);
@@ -73,7 +70,7 @@
 		}
 
 		#================================================================================================
-		public function Destroy()
+		public function Destroy(): void
 		#================================================================================================
 		{
 		    //Never delete this line!
@@ -82,7 +79,7 @@
 		}
 
 		#================================================================================================
-		public function ApplyChanges()
+		public function ApplyChanges(): void
 		#================================================================================================
 		{
 			//Never delete this line!
@@ -112,14 +109,27 @@
 		}
 
 		#================================================================================================
-		public function ReceiveData($JSONString)
+		public function GetCompatibleParents(): string
+		#================================================================================================
+		{
+			return json_encode([
+				'type' => 'connect',
+				'moduleIDs' => [
+					// enocean gateway
+					'{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}'
+				]
+			]);
+		}
+
+		#================================================================================================
+		public function ReceiveData(string $JSONString): string
 		#================================================================================================
 		{
 			$this->SendDebug("Receive", $JSONString, 0);
 			$data = json_decode($JSONString);
 			$this->SetTimerInterval('UpdateTimer', 0);
 
-			if($this->GetReturnID($data, array(165, 246)))return;
+			if($this->GetReturnID($data, array(165, 246)))return '';
 
 			#	Kalibrieren, wenn eingeleitet
 			if($this->GetBuffer("Calibrate")=="true"){
@@ -228,10 +238,11 @@
                     break;
                 default:
             }
+			return '';
 		}
 
 		#================================================================================================
-        public function RequestAction($Ident, $Value)
+        public function RequestAction(string $Ident, mixed $Value): void
 		#================================================================================================
 		{
             switch($Ident) {
@@ -263,13 +274,13 @@
 					$this->SetSlatAngle($Value);
                     break;
 				case "FreeDeviceID":
-					$this->UpdateFormField('DeviceID', 'value', $this->FreeDeviceID());
+					if($this->FreeDeviceID() > 0) $this->UpdateFormField('DeviceID', 'value', $this->FreeDeviceID());
 					break;
 				case "Listen":
 					$this->Listen($Value);
 					break;
 				case "Update":
-					$this->Update($Value);
+					$this->Update();
 					break;
 				case "SetReturnID":
 					$this->UpdateFormField('ReturnID', 'value', $Value);
@@ -280,7 +291,7 @@
         }
 
 		#================================================================================================
-        public function Learn()
+        public function Learn(): void
 		#================================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
@@ -293,7 +304,7 @@
         }
 
 		#================================================================================================
-        public function ShutterCalibrate()
+        public function ShutterCalibrate(): void
 		#================================================================================================
 		{
 			$this->SetBuffer("Calibrate", "true");
@@ -301,7 +312,7 @@
         }
 
 		#================================================================================================
-        public function ShutterStop()
+        public function ShutterStop(): void
 		#================================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
@@ -311,7 +322,7 @@
         }
 
 		#================================================================================================
-        public function ShutterMoveDown()
+        public function ShutterMoveDown(): void
 		#================================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
@@ -322,7 +333,7 @@
         }
 
 		#================================================================================================
-        public function ShutterMoveUp()
+        public function ShutterMoveUp(): void
 		#================================================================================================
 		{
 			$data = json_decode($this->ReadPropertyString("BaseData"));
@@ -333,7 +344,7 @@
         }
 
 		#================================================================================================
-        public function ShutterMoveDownEx(float $movetime)
+        public function ShutterMoveDownEx(float $movetime): void
 		#================================================================================================
 		{
 			$movetime *= 10;
@@ -349,7 +360,7 @@
         }
 
 		#================================================================================================
-        public function ShutterMoveUpEx(float $movetime)
+        public function ShutterMoveUpEx(float $movetime): void
 		#================================================================================================
 		{
 			$movetime *= 10;
@@ -365,21 +376,21 @@
         }
 
 		#================================================================================================
-        public function ShutterStepUp()
+        public function ShutterStepUp(): void
 		#================================================================================================
 		{
 			$this->ShutterMoveUpEx($this->ReadPropertyFloat("StepTime"));
         }
 
 		#================================================================================================
-        public function ShutterStepDown()
+        public function ShutterStepDown(): void
 		#================================================================================================
 		{
 			$this->ShutterMoveDownEx($this->ReadPropertyFloat("StepTime"));
         }
 
 		#================================================================================================
-        public function ShutterMoveTo(int $position)
+        public function ShutterMoveTo(int $position): void
 		#================================================================================================
 		{
 			#	Sicherstellen, dass der Aktor aktuell nicht fährt
@@ -440,7 +451,7 @@
         }
 
 		#================================================================================================
-        public function SetSlatAngle(int $angle)
+        public function SetSlatAngle(int $angle): void
 		#================================================================================================
 		{
 
@@ -477,7 +488,7 @@
         }
 
 		#================================================================================================
-		protected function SendData($data)
+		protected function SendData(string $data): void
 		#================================================================================================
 		{
 			$this->SendDataToParent($data);
@@ -485,35 +496,11 @@
 		}
 
 		#================================================================================================
-		protected function SendDebug($Message, $Data, $Format)
-		#================================================================================================
-		{
-			if (is_array($Data))
-			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
-						$this->SendDebug($Message . ":" . $Key, $DebugData, 0);
-			    }
-			}
-			else if (is_object($Data))
-			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
-						$this->SendDebug($Message . "." . $Key, $DebugData, 0);
-			    }
-			}
-			else
-			{
-			    parent::SendDebug($Message, $Data, $Format);
-			}
-		}
-
-		#================================================================================================
-		protected function FreeDeviceID()
+		protected function FreeDeviceID(): int
 		#================================================================================================
 		{
 			$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-			if($Gateway == 0) return;
+			if($Gateway == 0) return -1;
 			$Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
 			$DeviceArray = array();
 			foreach ($Devices as $Device){
@@ -529,7 +516,7 @@
 		}
 		
 		#=====================================================================================
-		private function Listen($value) 
+		private function Listen(int $value): void
 		#=====================================================================================
 		{
 			$this->SetReceiveDataFilter('');
@@ -547,7 +534,7 @@
 		}
 		
 		#=====================================================================================
-		private function Update($value) 
+		private function Update() : void
 		#=====================================================================================
 		{
 			$Position = $this->GetBuffer("Position");
@@ -566,9 +553,9 @@
 				$this->SetValue("position", round($newPosition)); 
 			}
 		}
-		
+
 		#=====================================================================================
-		private function GetReturnID($data, $DataValues) 
+		private function GetReturnID(mixed $data, mixed $DataValues): bool
 		#=====================================================================================
 		{
 			if($this->GetTimerInterval('ListenTimer') == 0) return false;
@@ -593,11 +580,11 @@
 		}
 
 		#=====================================================================================
-		private function GetDeviceArray()
+		private function GetDeviceArray(): mixed
 		#=====================================================================================
 		{
 			$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-			if($Gateway == 0) return;
+			if($Gateway == 0) return false;
 			$Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
 			$DeviceArray = array();
 			foreach ($Devices as $Device){
@@ -611,7 +598,7 @@
 		}
 
 		#=====================================================================================
-		private function SetFilter() 
+		private function SetFilter(): void
 		#=====================================================================================
 		{
 			#	ListenTimer ausschalten
@@ -619,9 +606,6 @@
 
 			#	Filter setzen
 			$ID = hexdec($this->ReadPropertyString("ReturnID"));
-			if(IPS_GetKernelVersion() < 6.3){
-				if($ID & 0x80000000)$ID -=  0x100000000;
-			}
 			$filter = sprintf('.*\"DeviceID\":%s,.*', $ID);
 			$this->SendDebug('Filter', $filter, 0);
 			$this->SetReceiveDataFilter($filter);

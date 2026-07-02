@@ -1,5 +1,5 @@
 <?php
-	class EnoceanButtonEmulator extends IPSModule
+	class EnoceanButtonEmulator extends IPSModuleStrict
 	{
 		private const BaseData      = '{
 			"DataID":"{70E3075F-A35D-4DEB-AC20-C929A156FE48}",
@@ -24,7 +24,7 @@
 		}';
 
 		#================================================================================================
-		public function Create() 
+		public function Create(): void
 		#================================================================================================
 		{
 			//Never delete this line!
@@ -32,13 +32,10 @@
 
 			$this->RegisterPropertyInteger('DeviceID', 0);
 			$this->RegisterPropertyBoolean('LeftSide', false);
-		
-			//Connect to available enocean gateway
-			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
 		}
 
 		#================================================================================================
-		public function Destroy()
+		public function Destroy(): void
 		#================================================================================================
 		{
 		    //Never delete this line!
@@ -47,7 +44,7 @@
 		}
     
 		#================================================================================================
-		public function ApplyChanges()
+		public function ApplyChanges(): void
 		#================================================================================================
 		{
 			//Never delete this line!
@@ -55,12 +52,25 @@
 		}
 
 		#================================================================================================
-		public function RequestAction($Ident, $Value)
+		public function GetCompatibleParents(): string
+		#================================================================================================
+		{
+			return json_encode([
+				'type' => 'connect',
+				'moduleIDs' => [
+					// enocean gateway
+					'{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}'
+				]
+			]);
+		}
+
+		#================================================================================================
+		public function RequestAction($Ident, $Value): void
 		#================================================================================================
 		{
 			switch($Ident) {
 				case "FreeDeviceID":
-					$this->UpdateFormField('DeviceID', 'value', $this->FreeDeviceID());
+					if($this->FreeDeviceID() > 0) $this->UpdateFormField('DeviceID', 'value', $this->FreeDeviceID());
 					break;
 				default:
 					throw new Exception("Invalid Ident");
@@ -68,14 +78,14 @@
 		}
 
 		#================================================================================================
-		public function PressUp()
+		public function PressUp(): void
 		#================================================================================================
 		{
 			$this->SendState($this->ReadPropertyBoolean('LeftSide')?48:112);
 		}
 
 		#================================================================================================
-		public function ShortPressUp()
+		public function ShortPressUp(): void
 		#================================================================================================
 		{
 			$this->SendState($this->ReadPropertyBoolean('LeftSide')?48:112);
@@ -84,14 +94,14 @@
 		}
 
 		#================================================================================================
-		public function PressDown()
+		public function PressDown(): void
 		#================================================================================================
 		{
 			$this->SendState($this->ReadPropertyBoolean('LeftSide')?16:80);
 		}
 
 		#================================================================================================
-		public function ShortPressDown()
+		public function ShortPressDown(): void
 		#================================================================================================
 		{
 			$this->SendState($this->ReadPropertyBoolean('LeftSide')?16:80);
@@ -100,14 +110,14 @@
 		}
 
 		#================================================================================================
-		public function Release()
+		public function Release(): void
 		#================================================================================================
 		{
 			$this->SendState(0);
 		}
 
 		#================================================================================================
-		protected function SendState(int $State)
+		protected function SendState(int $State): void
 		#================================================================================================
 		{
 			$data = json_decode(self::BaseData);
@@ -120,11 +130,11 @@
 		}
 
 		#================================================================================================
-		protected function FreeDeviceID()
+		protected function FreeDeviceID(): int
 		#================================================================================================
 		{
 			$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-			if($Gateway == 0) return;
+			if($Gateway == 0) return -1;
 			$Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
 			$DeviceArray = array();
 			foreach ($Devices as $Device){
@@ -138,28 +148,4 @@
 			for($ID = 1; $ID<=256; $ID++)if(!in_array($ID,$DeviceArray))break;
 			return $ID == 256?0:$ID;
 		}
-
-		#================================================================================================
-		protected function SendDebug($Message, $Data, $Format)
-		#================================================================================================
-		{
-			if (is_array($Data))
-			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
-						$this->SendDebug($Message . ":" . $Key, $DebugData, 0);
-			    }
-			}
-			else if (is_object($Data))
-			{
-			    foreach ($Data as $Key => $DebugData)
-			    {
-						$this->SendDebug($Message . "." . $Key, $DebugData, 0);
-			    }
-			}
-			else
-			{
-			    parent::SendDebug($Message, $Data, $Format);
-			}
-		} 
 	}

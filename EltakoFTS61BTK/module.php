@@ -1,11 +1,11 @@
 <?php
-class EltakoFTS61BTK extends IPSModule
+class EltakoFTS61BTK extends IPSModuleStrict
 {
 	private const Position      = array("TL" =>["top", "left"], "TR" =>["top", "right"], "BL" =>["bottom", "left"], "BR" =>["bottom", "right"]);
 	private const FlashTime		= 700;
 
 	#================================================================================================
-	public function Create()
+	public function Create(): void
 	#================================================================================================
 	{
 		#	Never delete this line!
@@ -44,13 +44,10 @@ class EltakoFTS61BTK extends IPSModule
 		#	ListenTimer
 		$this->RegisterTimer('ListenTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Listen", -1);');
 		$this->SetBuffer('Listen', 0);
-
-		#	Connect to available enocean gateway
-		$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
 	}
 
 	#================================================================================================
-	public function Destroy()
+	public function Destroy(): void
 	#================================================================================================
 	{
 		#	Never delete this line!
@@ -59,7 +56,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#================================================================================================
-	public function ApplyChanges()
+	public function ApplyChanges(): void
 	#================================================================================================
 	{
 		#	Never delete this line!
@@ -84,14 +81,27 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#================================================================================================
-	public function ReceiveData($JSONString)
+	public function GetCompatibleParents(): string
+	#================================================================================================
+	{
+		return json_encode([
+			'type' => 'connect',
+			'moduleIDs' => [
+				// enocean gateway
+				'{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}'
+			]
+		]);
+	}
+
+	#================================================================================================
+	public function ReceiveData(string $JSONString): string
 	#================================================================================================
 	{
 		$this->SendDebug("Receive", $JSONString, 0);
 		$data = json_decode($JSONString);
 		$this->SendDebug("State", $data->DataByte0, 0);
 
-		if($this->GetReturnID($data, array(16 => 2, 48 => 0, 80 => 3, 112 => 1)))return;
+		if($this->GetReturnID($data, array(16 => 2, 48 => 0, 80 => 3, 112 => 1)))return '';
 
 		$DataPosition = array(16 => 2, 48 => 0, 80 => 3, 112 => 1);
 		$Position = array_keys(self::Position);
@@ -125,11 +135,11 @@ class EltakoFTS61BTK extends IPSModule
 					$this->SetTimerInterval("Button".$pos, $this->ReadPropertyInteger('LongPressDetectionTime'));
 				}
 		}
-
+		return '';
 	}
 
 	#================================================================================================
-	public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+	public function MessageSink(int $TimeStamp, int $SenderID, int $Message, mixed $Data): void
 	#================================================================================================
 	{
 		switch ($Message) {
@@ -157,7 +167,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#================================================================================================
-	public function RequestAction($Ident, $Value) 
+	public function RequestAction(string $Ident, mixed $Value): void
 	#================================================================================================
 	{
 		switch($Ident) {
@@ -182,7 +192,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#================================================================================================
-	private function LongPress(string $Position)
+	private function LongPress(string $Position): void
 	#================================================================================================
 	{
 		$this->SetTimerInterval('Button'.$Position, 0);
@@ -200,7 +210,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#================================================================================================
-	private function DirectState(string $Position, string $DetectionLabel)
+	private function DirectState(string $Position, string $DetectionLabel): void
 	#================================================================================================
 	{
 		if(!$this->ReadPropertyBoolean('IndicatorLight'))return;
@@ -208,7 +218,6 @@ class EltakoFTS61BTK extends IPSModule
 		$this->SendDebug("ReceiveData at Button".$Position, $ID, 0);
 		$PositionArray = array_keys(self::Position);
 		$nr = array_search($Position, $PositionArray);
-		if(!$this->ReadPropertyBoolean('DirectLed'.$DetectionLabel.$PositionArray[$nr]))return;
 
 		$state = true;
 		if($ID == 0){
@@ -220,6 +229,7 @@ class EltakoFTS61BTK extends IPSModule
 			$ID = $this->ReadPropertyInteger("StatusID".$PositionArray[$nr]);
 			$state = false;
 		}
+		if(!$this->ReadPropertyBoolean('DirectLed'.$DetectionLabel.$PositionArray[$nr]))return;
 		if($ID <>0){
 			$this->SendState($PositionArray[$nr], $state);
 			$this->SetTimerInterval($PositionArray[$nr], 2500);
@@ -227,7 +237,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#================================================================================================
-	public function SwitchLED(string $Position, int $state)
+	public function SwitchLED(string $Position, int $state): void
 	#================================================================================================
 	{
 		if(!$this->ReadPropertyBoolean('IndicatorLight')){
@@ -247,7 +257,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#================================================================================================
-	private function RenewState(string $TimerID)
+	private function RenewState(string $TimerID): void
 	#================================================================================================
 	{
 		$this->SetTimerInterval($TimerID, 0);
@@ -257,7 +267,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#================================================================================================
-	private function LedFlash(string $Position)
+	private function LedFlash(string $Position): void
 	#================================================================================================
 	{
 		$State = $this->GetBuffer('LedState'.$Position) == "true"?false:true;
@@ -265,7 +275,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#================================================================================================
-	protected function SendState(string $Position, bool $State)
+	protected function SendState(string $Position, bool $State): void
 	#================================================================================================
 	{
 		$this->SetBuffer('LedState'.$Position, $State?"true":"false");
@@ -298,33 +308,9 @@ class EltakoFTS61BTK extends IPSModule
 		SPRT_SendText( $Port, $SendText );
 		return;
 	}
-
-	#================================================================================================
-	protected function SendDebug($Message, $Data, $Format)
-	#================================================================================================
-	{
-		if (is_array($Data))
-		{
-			foreach ($Data as $Key => $DebugData)
-			{
-					$this->SendDebug($Message . ":" . $Key, $DebugData, 0);
-			}
-		}
-		else if (is_object($Data))
-		{
-			foreach ($Data as $Key => $DebugData)
-			{
-					$this->SendDebug($Message . "." . $Key, $DebugData, 0);
-			}
-		}
-		else
-		{
-			parent::SendDebug($Message, $Data, $Format);
-		}
-	}
 	 
 	#=====================================================================================
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	#=====================================================================================
 	{
 		$form = json_decode(file_get_contents(__DIR__ . "/form.json"));
@@ -337,7 +323,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 	 
 	#=====================================================================================
-	private function Listen($value) 
+	private function Listen(int $value): void
 	#=====================================================================================
 	{
 		$this->SetReceiveDataFilter('');
@@ -355,7 +341,7 @@ class EltakoFTS61BTK extends IPSModule
 	}
 	 
 	#=====================================================================================
-	private function GetReturnID($data, $DataValues) 
+	private function GetReturnID(mixed $data, mixed $DataValues): bool
 	#=====================================================================================
 	{
 		if($this->GetTimerInterval('ListenTimer') == 0) return false;
@@ -380,11 +366,11 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#=====================================================================================
-    private function GetDeviceArray()
+    private function GetDeviceArray(): mixed
 	#=====================================================================================
     {
 		$Gateway = @IPS_GetInstance($this->InstanceID)["ConnectionID"];
-		if($Gateway == 0) return;
+		if($Gateway == 0) return array();
         $Devices = IPS_GetInstanceListByModuleType(3);             # alle Geräte
         $DeviceArray = array();
         foreach ($Devices as $Device){
@@ -398,7 +384,7 @@ class EltakoFTS61BTK extends IPSModule
     }
 
 	#=====================================================================================
-	private function SetFilter() 
+	private function SetFilter(): void 
 	#=====================================================================================
 	{
 		#	ListenTimer ausschalten
@@ -416,14 +402,10 @@ class EltakoFTS61BTK extends IPSModule
 	}
 
 	#=====================================================================================
-	private function GetID() 
+	private function GetID(): int
 	#=====================================================================================
 	{
-		$ID = hexdec($this->ReadPropertyString("ReturnID"));
-		if(IPS_GetKernelVersion() < 6.3){
-			if($ID & 0x80000000)$ID -=  0x100000000;
-		}
-		return($ID);
+		return hexdec($this->ReadPropertyString("ReturnID"));
 	}
 }
 ?>
