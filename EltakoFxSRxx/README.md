@@ -11,12 +11,13 @@
 	Die Module haben denselben Funktionsumfang, wie die Grundmodule von Symcon.
 	Der Befehlsaufruf ändert sich allerdings. Der Prefix <b><i>ENO</i></b> wird durch den Prefix <b><i>MEF</i></b> ersetzt. Der Rest des Aufrufs bleibt inklusiver der zu übergebenden Parameter identisch.
 	<h2>Eltako Schaltaktoren FxSRxx Serie (ähnlich EEP A5-38-08)</h2>
-	Das Modul wurde für <b>Eltako FSR Schaltaktoren</b> entwickelt (z.B. FSR14-2X/4X, F4SR14-LED, FSR71,..)<br>
+	Das Modul wurde für <b>Eltako FSR Schaltaktoren</b> entwickelt (z.B. FSR14-2X/4X, F4SR14-LED, FSR14M-2x, FSR71,..)<br>
 	<br>
 	Das Modul unterstützt folgende Funktionen:
 	<ol>
 		<li>Einlernen in den Aktor als GFVS</li>
 		<li>Schaltzustand mit absoluter Priorität blockieren, so kann das Schalten mit eingelernten Funktastern unterbunden werden</li>
+		<li>Auswertung der Messfunktion des FSR14M-2x (Augenblicksleistung in Watt, EEP A5-12-01)</li>
 	</ol>
 	<h3>Hardware einlernen</h3>
 	Das Einlernen geschieht wie folgt:
@@ -25,6 +26,14 @@
 		<li>Gerät in den Einlernmodus versetzen</li>
 		<li>Einlerntaste im Symcon-Modul drücken</li>
 	</ol>
+	<br>
+	<h3>Messfunktion (nur FSR14M-2x)</h3>
+	Der FSR14M-2x sendet seine Augenblicksleistung selbsttätig als 4BS-Telegramm (EEP A5-12-01). Zur Auswertung:
+	<ol>
+		<li>Melde-ID (ReturnID) des Aktors eintragen (gleiche ID wie für die Schaltrückmeldung)</li>
+		<li>Haken <b><i>Messfunktion auswerten</i></b> setzen</li>
+	</ol>
+	Es wird die Variable <b>Leistung</b> (in W) angelegt und bei jedem Mess-Telegramm aktualisiert. Einen Zählerstand (kWh) sendet der FSR14M-2x nicht.<br>
 	<br>
 	<h3>Mögliche PHP-Befehle</h3>
 	<table>
@@ -49,6 +58,10 @@
 	  <tr>
 		<td>V3.16</td>
 		<td>Grundversion</td>
+	  </tr>
+	  <tr>
+		<td>V3.21</td>
+		<td>Neu: FSR14M-2x - Auswertung der Messfunktion (Augenblicksleistung in W, EEP A5-12-01)</td>
 	  </tr>
 	</table>
   </body>
