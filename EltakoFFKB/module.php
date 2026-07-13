@@ -13,10 +13,6 @@
 			$this->RegisterTimer('ListenTimer', 0, 'IPS_RequestAction($_IPS["TARGET"], "Listen", -1);');
 			$this->SetBuffer('Listen', 0);
 
-			//Connect to available enocean gateway
-			$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
-
-
 			#	Fehlende Profile erzeugen
 			if (!IPS_VariableProfileExists('Voltage.MEF')) {
 				IPS_CreateVariableProfile('Voltage.MEF', 2);
