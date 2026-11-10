@@ -184,6 +184,11 @@
 		<td>V4.01</td>
 		<td>Neu: FSR14M-2x - Auswertung der Messfunktion (Augenblicksleistung in W, EEP A5-12-01)</td>
 	  </tr>
+	  <tr>
+		<td>V4.02</td>
+		<td>Neu: FSBxx - verbesserte Genauigkeit bei Position und Winkel<br>
+			Neu: FSBxx - Winkel lässt sich im neuen Webfront ansteuern</td>
+	  </tr>
 	</table>
   </body>
 </html>

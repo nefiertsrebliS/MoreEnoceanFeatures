@@ -15,6 +15,8 @@
 			$this->RegisterPropertyFloat("StepTime", 0.1);
 			$this->RegisterPropertyFloat("SlatTurnTime", 0.0);
 			$this->RegisterPropertyBoolean("TurnWithoutTravel", false);
+			$this->RegisterAttributeFloat('MoveTime', (@$this->GetIDForIdent('movetime') > 1)?$this->GetValue('movetime'):0);
+			$this->RegisterAttributeFloat('TurnTime', 0);
 			$this->SetBuffer("Calibrate", "false");
 
 			$this->RegisterPropertyString("BaseData", '{
@@ -87,22 +89,18 @@
 
 			$this->RegisterVariableInteger("action", $this->Translate("Action"), "ShutterMoveStop.MEF");
 			$this->RegisterVariableInteger("position", $this->Translate("Position"), "~Shutter");
-			$this->RegisterVariableFloat("movetime", $this->Translate("Travel time"), "ShutterMoveTime.MEF");
 
 			$this->EnableAction("action");
 			$this->EnableAction("position");
 
 			if($this->ReadPropertyFloat("SlatTurnTime") > 0){
-				$this->RegisterVariableInteger("slatangle", $this->Translate("Slat Angle"), "~Intensity.100");
+				$this->RegisterVariableInteger("slatangle", $this->Translate("Slat Angle"), "~Lamella");
 				$this->EnableAction("slatangle");
 				$this->UpdateFormField("TurnWithoutTravel", "visible", true);
 			}else{
 				$this->UnRegisterVariable("slatangle");
 				$this->UpdateFormField("TurnWithoutTravel", "visible", false);
 			}
-
-			#	Position merken
-			$this->SetBuffer('Position', $this->GetValue('position'));
 
 			#	Filter setzen
 			$this->SetFilter();
@@ -161,49 +159,36 @@
 
 				#	ShutterDevice liefert Richtung und Fahrzeit
                 case "165":
-					$dir = ($data->DataByte1 == 1)? -1:1;	# -1: öffnen, 1: schließen
-					$dt = $dir * ((int)$data->DataByte2 + (int)$data->DataByte3 * 255) / 10;
-
 					$DownTime = $this->ReadPropertyFloat("DownTime");
 					$UpTime = $this->ReadPropertyFloat("UpTime");
+					$dir = ($data->DataByte1 == 1)? -$DownTime/$UpTime:1;	# -1: öffnen, 1: schließen - Beim Öffnen wird auf die DownTime umgerechnet
+					$dt = $dir * ((int)$data->DataByte2 + (int)$data->DataByte3 * 255) / 10;
+
+					$moveTime = $this->ReadAttributeFloat('MoveTime') + $dt;
+					$moveTime = max(0, min($DownTime, $moveTime));
+					$this->WriteAttributeFloat('MoveTime', $moveTime);
+
+					$slatTurnTime = $this->ReadPropertyFloat("SlatTurnTime");
+					$turnTime = $this->ReadAttributeFloat('TurnTime') + $dt;
+					$turnTime = max(0, min($slatTurnTime, $turnTime));
+					$this->WriteAttributeFloat('TurnTime', $turnTime);
+
 					$RollFactor = $this->ReadPropertyFloat("RollFactor");
 
 					# Lamellenwinkel und Position ermitteln
-					if($this->ReadPropertyFloat("SlatTurnTime") > 0){
-						if($dir >0){
-							$dtSlat = (100 - $this->GetValue("slatangle")) / 100 * $this->ReadPropertyFloat("SlatTurnTime");
-						}else{
-							$dtSlat = -$this->GetValue("slatangle") / 100 * $this->ReadPropertyFloat("SlatTurnTime");
-						}
 
-						#	Lamellenwinkel und Position?
-						if (abs($dt) > abs($dtSlat)){
-							$this->SetValue("slatangle", ($dir > 0)?100:0);
-							#	Lamellenwinkel und Verfahren getrennt?
-							if($this->ReadPropertyBoolean("TurnWithoutTravel")) $dt -= $dtSlat;
-						}else{ 
-							$newAngle = round($this->GetValue("slatangle") + $dt/$this->ReadPropertyFloat("SlatTurnTime") * 100);
-							$newAngle = ($newAngle > 100)?100:$newAngle;
-							$newAngle = ($newAngle < 0)?0:$newAngle;
-							$this->SetValue("slatangle", $newAngle); 
-							#	Lamellenwinkel und Verfahren getrennt?
-							if($this->ReadPropertyBoolean("TurnWithoutTravel")) $dt = 0;
-						}  
+					if($this->ReadPropertyFloat("SlatTurnTime") > 0){
+						$slatAngle = $turnTime / $slatTurnTime * 100;
+						$this->SetValue('slatangle', $slatAngle);
 					}
 
-					#	neue Position ermitteln
-					$newValue = $this->GetValue("movetime") + $dt;
-					if($newValue < 0)$newValue = 0;
-					if($newValue > $DownTime)$newValue = $DownTime;
-					$this->SetValue("movetime", $newValue);
+					if($this->ReadPropertyBoolean("TurnWithoutTravel"))$moveTime -= $turnTime;		
+					if($this->ReadPropertyBoolean("TurnWithoutTravel"))$DownTime -= $slatTurnTime;		
 
 					#	Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
-					$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $newValue;
-
-					#	neue Position ermitteln
-					$newPosition = round($newValue / $DownTime * 100 * $Factor);
-					$this->SetValue("position", $newPosition); 
-					$this->SetBuffer('Position', $newPosition);
+					$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $moveTime;
+					$position = $moveTime / $DownTime * 100 * $Factor;
+					$this->SetValue("position", $position); 
 
 					$this->SetValue("action", 0);
                     break;
@@ -213,10 +198,12 @@
 					switch($data->DataByte0) {
 						case 1:
 							$this->SetValue("action", -1);
+							$this->SetBuffer('StartTime', strval(time()));
 							$this->SetTimerInterval('UpdateTimer', 1000);
 						    break;
 						case 2:
 							$this->SetValue("action", 1);
+							$this->SetBuffer('StartTime', strval(time()));
 							$this->SetTimerInterval('UpdateTimer', 1000);
 						    break;
 						case 80:
@@ -224,13 +211,11 @@
 							$this->SetValue("position", 100);
 							$DownTime = $this->ReadPropertyFloat("DownTime");
 							if($this->ReadPropertyBoolean("TurnWithoutTravel"))$DownTime -= $this->ReadPropertyFloat("SlatTurnTime");
-							$this->SetValue("movetime", $DownTime);
 							if($this->ReadPropertyFloat("SlatTurnTime") > 0)$this->SetValue("slatangle", 100);
 						    break;
 						case 112:
 							$this->SetValue("action", 0);
 							$this->SetValue("position", 0);
-							$this->SetValue("movetime", 0);
 							if($this->ReadPropertyFloat("SlatTurnTime") > 0)$this->SetValue("slatangle", 0);
 						    break;
 						default:
@@ -413,8 +398,11 @@
 			$data->DeviceID = $this->ReadPropertyInteger("DeviceID");
 
 			#	Zeit für Zielposition holen
+			$slatTurnTime = $this->ReadPropertyFloat("SlatTurnTime");
 			$DownTime = $this->ReadPropertyFloat("DownTime");
+			if($this->ReadPropertyBoolean("TurnWithoutTravel"))$DownTime -= $slatTurnTime;		
 			$UpTime = $this->ReadPropertyFloat("UpTime");
+			if($this->ReadPropertyBoolean("TurnWithoutTravel"))$UpTime -= $slatTurnTime;		
 			$RollFactor = $this->ReadPropertyFloat("RollFactor");
 
 			for($i = 0; $i < $DownTime*100; $i++){
@@ -423,21 +411,19 @@
 				if($newPosition >= $position)break;
 			}
 			$newTime = $i/100;
-
-			#	Zeit für aktuelle Position holen
-			$oldTime = $this->GetValue("movetime");
+			$this->SendDebug("newTime", $newTime, 0);
 
 			#	Movetime und Direction bestimmen
-			$moveTime = $newTime - $oldTime;
+			$moveTime = $newTime - $this->ReadAttributeFloat("MoveTime");
+			$this->SendDebug("moveTime", $moveTime, 0);
 
-			# Korrektur bei SlatTurnTime und TurnWithoutTravel
-			if($this->ReadPropertyFloat("SlatTurnTime") > 0 && $this->ReadPropertyBoolean("TurnWithoutTravel")){
-				if($moveTime > 0){
-					$moveTime += (100 - $this->GetValue("slatangle")) / 100 * $this->ReadPropertyFloat("SlatTurnTime");
-				}else{
-					$moveTime -= $this->GetValue("slatangle") / 100 * $this->ReadPropertyFloat("SlatTurnTime");
-				}
+			# Korrektur bei TurnWithoutTravel
+			if($this->ReadPropertyBoolean("TurnWithoutTravel")){
+				if($moveTime + $this->ReadAttributeFloat('TurnTime') > 0) $moveTime += $slatTurnTime;
 			}
+			$this->SendDebug("moveTime", $moveTime, 0);
+			if(($position == 0) || ($position == 100))$moveTime += ($moveTime > 0)?1:-1;
+			$this->SendDebug("moveTime", $moveTime, 0);
 
 			# Ausführen
 			if($moveTime > 0){
@@ -537,21 +523,33 @@
 		private function Update() : void
 		#=====================================================================================
 		{
-			$Position = $this->GetBuffer("Position");
-			$Action = $this->GetValue("action");
+			$dir = ($this->GetValue("action") < 0)?-1:1;
+			$dt = $dir * (time() - intval($this->GetBuffer('StartTime')));
+
 			$DownTime = $this->ReadPropertyFloat("DownTime");
-			$dt = $this->GetTimerInterval('UpdateTimer') / 1000;
-			if($Action < 0){
-				$newPosition = $Position - 100 / $DownTime * $dt;
-				if($newPosition < 0)$newPosition = 0;
-				$this->SetBuffer('Position', $newPosition);
-				$this->SetValue("position", round($newPosition)); 
-			}elseif($Action > 0){
-				$newPosition = $Position + 100 / $DownTime * $dt;
-				if($newPosition > 100)$newPosition = 100;
-				$this->SetBuffer('Position', $newPosition);
-				$this->SetValue("position", round($newPosition)); 
+			$moveTime = $this->ReadAttributeFloat('MoveTime') + $dt;
+			$moveTime = max(0, min($DownTime, $moveTime));
+
+			$slatTurnTime = $this->ReadPropertyFloat("SlatTurnTime");
+			$turnTime = $this->ReadAttributeFloat('TurnTime') + $dt;
+			$turnTime = max(0, min($slatTurnTime, $turnTime));
+
+			$RollFactor = $this->ReadPropertyFloat("RollFactor");
+
+			# Lamellenwinkel und Position ermitteln
+
+			if($this->ReadPropertyFloat("SlatTurnTime") > 0){
+				$slatAngle = $turnTime / $slatTurnTime * 100;
+				$this->SetValue('slatangle', $slatAngle);
 			}
+
+			if($this->ReadPropertyBoolean("TurnWithoutTravel"))$moveTime -= $turnTime;		
+			if($this->ReadPropertyBoolean("TurnWithoutTravel"))$DownTime -= $slatTurnTime;		
+
+			#	Korrekturfaktor berücksichtigt höhere Geschwindigkeit bei aufgewickelter (dicker) Rolle
+			$Factor = $RollFactor - ($RollFactor - 1) / $DownTime * $moveTime;
+			$position = $moveTime / $DownTime * 100 * $Factor;
+			$this->SetValue("position", $position); 
 		}
 
 		#=====================================================================================

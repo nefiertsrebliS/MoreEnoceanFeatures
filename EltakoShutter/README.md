@@ -167,6 +167,11 @@
 		<td>V3.18</td>
 		<td>Fix: Shutter stoppt nicht am Fahrzeitende</td>
 	  </tr>
+	  <tr>
+		<td>V4.02</td>
+		<td>Neu: Verbesserte Genauigkeit bei Position und Winkel<br>
+			Neu: Winkel lässt sich im neuen Webfront ansteuern</td>
+	  </tr>
 	</table>
   </body>
 </html>

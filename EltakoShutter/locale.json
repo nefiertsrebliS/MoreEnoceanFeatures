@@ -15,6 +15,7 @@
 			"Slat turning time (0-100%) in sec": "Wendedauer der Lamelle (0-100%) in sec",
 			"Action": "Aktion",
 			"Position": "Position",
+			"Settings only for blinds": "Einstellungen nur für Jalousien",
 			"Travel time": "Fahrzeit",
 			"Slat Angle": "Lamellenwinkel",
 			"Slat turning without travel": "Lamellenverstellung ohne Verfahrweg",
@@ -29,10 +30,10 @@
 			"Travel time down":"Fahrzeit Schließen",
 			"1. Open the Shutter/Blind COMPLETELY":"1. Rollladen/Jalousie VOLLSTÄNDIG öffnen",
 			"2. Start calibration":"2. Kalibrierung starten",
-			"3. For exact calibration, press the calibration button IMMEDIATELY when the roller shutter is completely closed":"3. Zur exakten Kalibrierung die Kalibriertaste SOFORT dr�cken, wenn der Rollladen vollst�ndig geschlossen ist",
+			"3. For exact calibration, press the calibration button IMMEDIATELY when the roller shutter is completely closed":"3. Zur exakten Kalibrierung die Kalibriertaste SOFORT drücken, wenn der Rollladen vollständig geschlossen ist",
 			"Travel time up":"Fahrzeit öffnen",
 			"1. Close the Shutter/Blind COMPLETELY":"1. Rollladen/Jalousie VOLLSTÄNDIG schließen",
-			"3. For exact calibration, press the calibration button IMMEDIATELY when the roller shutter is completely opened":"3. Zur exakten Kalibrierung die Kalibriertaste SOFORT dr�cken, wenn der Rollladen vollst�ndig ge�ffnet ist",
+			"3. For exact calibration, press the calibration button IMMEDIATELY when the roller shutter is completely opened":"3. Zur exakten Kalibrierung die Kalibriertaste SOFORT drücken, wenn der Rollladen vollständig geöffnet ist",
 			"1. fill in the DeviceID above": "1. Tragen Sie die Geräte-ID oben ein",
 			"2. press TEACHIN after activating the learnmode on your device": "2. Drücken Sie EINLERNEN, nachdem Sie das Gerät in den Lernmodus versetzt haben"
 		}
